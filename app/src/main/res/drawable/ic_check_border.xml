@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/black">
+
+    <!-- Círculo de borde gris -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#9E9E9E"
+        android:strokeWidth="2"
+        android:pathData="M12,2a10,10 0 1,0 10,10A10,10 0 0,0 12,2z"/>
+
+    <!-- Check (como placeholder) -->
+    <path
+        android:strokeColor="#9E9E9E"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M8,12l2,2 4,-4" />
+</vector>
