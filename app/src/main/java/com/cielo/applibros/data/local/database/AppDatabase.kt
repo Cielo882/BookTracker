@@ -11,7 +11,7 @@ import com.cielo.applibros.data.local.entities.BookEntity
 
 @Database(
     entities = [BookEntity::class],
-    version = 3, // La versión actual de tu schema
+    version = 4, // La versión actual de tu schema
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

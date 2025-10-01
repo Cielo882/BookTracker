@@ -8,18 +8,34 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cielo.applibros.data.local.database.AppDatabase
 import com.cielo.applibros.data.remote.api.GutendexApiService
 import com.cielo.applibros.data.repository.BookRepositoryImpl
 import com.cielo.applibros.domain.usecase.AddToReadUseCase
+import com.cielo.applibros.domain.usecase.GetBooksToReadUseCase
 import com.cielo.applibros.domain.usecase.GetBooksUseCase
+import com.cielo.applibros.domain.usecase.GetCurrentlyReadingUseCase
+import com.cielo.applibros.domain.usecase.GetFinishedBooksUseCase
 import com.cielo.applibros.domain.usecase.GetReadBooksUseCase
+import com.cielo.applibros.domain.usecase.GetUserStatsUseCase
 import com.cielo.applibros.domain.usecase.RemoveFromReadUseCase
+import com.cielo.applibros.domain.usecase.ToggleFavoriteUseCase
 import com.cielo.applibros.domain.usecase.UpdateBookRatingUseCase
+import com.cielo.applibros.domain.usecase.UpdateBookReviewUseCase
+import com.cielo.applibros.domain.usecase.UpdateBookStatusUseCase
 import com.cielo.applibros.presentation.adapter.BookAdapter
-import com.cielo.applibros.presentation.viewmodel.BookView
+import com.cielo.applibros.presentation.dialogs.SearchDialogFragment
+import com.cielo.applibros.presentation.fragments.FinishedFragment
+import com.cielo.applibros.presentation.fragments.ProfileFragment
+import com.cielo.applibros.presentation.fragments.ReadingFragment
+import com.cielo.applibros.presentation.fragments.ToReadFragment
+import com.cielo.applibros.presentation.viewmodel.BookViewModelUpdated
+import com.cielo.applibros.presentation.viewmodel.ProfileViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Retrofit
@@ -27,155 +43,124 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var bookAdapter: BookAdapter
-    private lateinit var viewModel: BookView
-    private var currentTab = 0
+    private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var searchFab: FloatingActionButton
+
+    // ViewModels (en un proyecto real usarías ViewModelProvider o Hilt)
+    lateinit var bookViewModel: BookViewModelUpdated
+    lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Forzar modo oscuro
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-
         setContentView(R.layout.activity_main)
 
         setupDependencies()
-        setupRecyclerView()
-        setupObservers()
-        setupListeners()
+        setupViews()
+        setupBottomNavigation()
+        setupFab()
 
-        // Cargar leidos  al inicio
-        viewModel.loadReadBooks()
+        // Cargar el fragmento inicial
+        if (savedInstanceState == null) {
+            loadFragment(ToReadFragment())
+            bottomNavigation.selectedItemId = R.id.nav_to_read
+        }
     }
 
     private fun setupDependencies() {
-
         // Configurar OkHttpClient
         val okHttpClient = NetworkHelper.createUnsafeOkHttpClient()
 
-        //  Retrofit config
+        // Retrofit config
         val retrofit = Retrofit.Builder()
             .baseUrl(GutendexApiService.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        /*
-        // Configurar Retrofit
-        val retrofit = Retrofit.Builder()
-            .baseUrl(GutendexApiService.Companion.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()*/
 
         val apiService = retrofit.create(GutendexApiService::class.java)
-        val database = AppDatabase.Companion.getDatabase(this)
+        val database = AppDatabase.getDatabase(this)
         val bookDao = database.bookDao()
 
         // Crear repository y los casos de uso
         val repository = BookRepositoryImpl(apiService, bookDao)
+
+        // Use cases existentes
         val getBooksUseCase = GetBooksUseCase(repository)
         val getReadBooksUseCase = GetReadBooksUseCase(repository)
         val addToReadUseCase = AddToReadUseCase(repository)
         val removeFromReadUseCase = RemoveFromReadUseCase(repository)
         val updateBookRatingUseCase = UpdateBookRatingUseCase(repository)
 
+        // Nuevos use cases
+        val updateBookStatusUseCase = UpdateBookStatusUseCase(repository)
+        val updateBookReviewUseCase = UpdateBookReviewUseCase(repository)
+        val toggleFavoriteUseCase = ToggleFavoriteUseCase(repository)
+        val getBooksToReadUseCase = GetBooksToReadUseCase(repository)
+        val getCurrentlyReadingUseCase = GetCurrentlyReadingUseCase(repository)
+        val getFinishedBooksUseCase = GetFinishedBooksUseCase(repository)
+        val getUserStatsUseCase = GetUserStatsUseCase(repository)
 
-        // (en un proyecto real se usa ViewModelFactory)
-        viewModel = BookView(
+        // ViewModels
+        bookViewModel = BookViewModelUpdated(
             getBooksUseCase,
             getReadBooksUseCase,
             addToReadUseCase,
             removeFromReadUseCase,
-            updateBookRatingUseCase
+            updateBookRatingUseCase,
+            updateBookStatusUseCase,
+            updateBookReviewUseCase,
+            toggleFavoriteUseCase,
+            getBooksToReadUseCase,
+            getCurrentlyReadingUseCase,
+            getFinishedBooksUseCase
         )
+
+        profileViewModel = ProfileViewModel(getUserStatsUseCase)
     }
 
-    private fun setupRecyclerView() {
-        bookAdapter = BookAdapter(
-            onBookClick = { book ->
-                // Abrir detalles del libro
-                AlertDialog.Builder(this)
-                    .setTitle(book.title)
-                    .setMessage("ID Gutendex API: ${book.id}\n" +
-                                "Autor: ${book.authors.joinToString(", ")}\n" +
-                            "Idiomas: ${book.languages.joinToString(", ")}"+
-                            "Categorias: ${book.subjects.joinToString(", ")}\n"
+    private fun setupViews() {
+        bottomNavigation = findViewById(R.id.bottom_navigation)
+        searchFab = findViewById(R.id.fab_search)
+    }
 
-
-                    )
-                    .setPositiveButton("Cerrar", null)
-                    .show()
-            },
-            onReadClick = { book ->
-                if (book.isRead) {
-                    viewModel.removeFromRead(book.id)
-                } else {
-                    viewModel.addToRead(book)
+    private fun setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_to_read -> {
+                    loadFragment(ToReadFragment())
+                    true
                 }
-            }, onRatingChanged = { book, rating ->
-                viewModel.updateBookRating(book.id, rating)
-            }
-        )
-
-        findViewById<RecyclerView>(R.id.rvBooks).apply {
-            adapter = bookAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity)
-        }
-    }
-
-    private fun setupObservers() {
-        viewModel.books.observe(this) { books ->
-            if (currentTab == 0) {
-                bookAdapter.submitList(books)
-            }
-        }
-
-        viewModel.readBooks.observe(this) { readBooks ->
-            if (currentTab == 1) {
-                bookAdapter.submitList(readBooks)
-            }
-        }
-
-        viewModel.isLoading.observe(this) { isLoading ->
-            findViewById<ProgressBar>(R.id.progressBar).visibility =
-                if (isLoading) View.VISIBLE else View.GONE
-        }
-
-        viewModel.error.observe(this) { error ->
-            error?.let {
-                // Mostrar error
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun setupListeners() {
-        findViewById<Button>(R.id.btnSearch).setOnClickListener {
-            val query = findViewById<TextInputEditText>(R.id.etSearch).text.toString()
-            if (query.isNotBlank()) {
-                viewModel.searchBooks(query)
-            }
-        }
-
-        findViewById<TabLayout>(R.id.tabLayout).addOnTabSelectedListener(
-            object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    currentTab = tab?.position ?: 0
-                    when (currentTab) {
-                        0 -> {
-                            // Mostrar resultados de búsqueda
-                            viewModel.books.value?.let { bookAdapter.submitList(it) }
-                        }
-                        1 -> {
-                            // Mostrar leidos
-                            viewModel.readBooks.value?.let { bookAdapter.submitList(it) }
-                        }
-                    }
+                R.id.nav_reading -> {
+                    loadFragment(ReadingFragment())
+                    true
                 }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {}
-                override fun onTabReselected(tab: TabLayout.Tab?) {}
+                R.id.nav_finished -> {
+                    loadFragment(FinishedFragment())
+                    true
+                }
+                R.id.nav_profile -> {
+                    loadFragment(ProfileFragment())
+                    true
+                }
+                else -> false
             }
-        )
+        }
     }
+
+    private fun setupFab() {
+        searchFab.setOnClickListener {
+            val searchDialog = SearchDialogFragment()
+            searchDialog.show(supportFragmentManager, "search_dialog")
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    // Métodos para compartir ViewModels con fragments
+    fun getBookViewModel(): BookViewModelUpdated = bookViewModel
+    fun getProfileViewModel(): ProfileViewModel = profileViewModel
 }

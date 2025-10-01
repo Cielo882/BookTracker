@@ -1,24 +1,73 @@
 package com.cielo.applibros.data.local.dao
 
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.cielo.applibros.data.local.entities.BookEntity
+import com.cielo.applibros.domain.model.ReadingStatus
 
 @Dao
 interface BookDao {
-    @Query("SELECT * FROM read_books")
-    suspend fun getAllReadBooks(): List<BookEntity>
 
-    @Query("SELECT * FROM read_books WHERE id = :id")
+    // Métodos existentes actualizados
+    @Query("SELECT * FROM books")
+    fun getAllBooks(): LiveData<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE id = :id")
     suspend fun getBookById(id: Int): BookEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBook(book: BookEntity)
 
-    @Query("DELETE FROM read_books WHERE id = :id")
-    suspend fun deleteBook(id: Int)
+    @Delete
+    suspend fun deleteBook(book: BookEntity)
 
+    @Update
+    suspend fun updateBook(book: BookEntity)
 
-    @Query("UPDATE read_books SET rating = :rating WHERE id = :bookId")
-    suspend fun updateBookRating(bookId: Int, rating: Float)
+    // Nuevos métodos por estado
+    @Query("SELECT * FROM books WHERE readingStatus = :status ORDER BY dateAdded DESC")
+    fun getBooksByStatus(status: ReadingStatus): LiveData<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE readingStatus = 'TO_READ' ORDER BY dateAdded DESC")
+    fun getBooksToRead(): LiveData<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE readingStatus = 'READING' ORDER BY startDate DESC")
+    fun getCurrentlyReading(): LiveData<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE readingStatus = 'FINISHED' ORDER BY finishDate DESC")
+    fun getFinishedBooks(): LiveData<List<BookEntity>>
+
+    // Métodos para favoritos
+    @Query("SELECT * FROM books WHERE isFavorite = 1 AND readingStatus = 'FINISHED' LIMIT 3")
+    fun getFavoriteBooks(): LiveData<List<BookEntity>>
+
+    // Estadísticas
+    @Query("SELECT COUNT(*) FROM books WHERE readingStatus = 'FINISHED'")
+    suspend fun getTotalBooksRead(): Int
+
+    @Query("SELECT COUNT(*) FROM books WHERE readingStatus = 'TO_READ'")
+    suspend fun getTotalBooksToRead(): Int
+
+    @Query("SELECT AVG(rating) FROM books WHERE rating IS NOT NULL AND readingStatus = 'FINISHED'")
+    suspend fun getAverageRating(): Double?
+
+    // Actualizar estado específico
+    @Query("UPDATE books SET readingStatus = :status WHERE id = :bookId")
+    suspend fun updateReadingStatus(bookId: Int, status: ReadingStatus)
+
+    @Query("UPDATE books SET rating = :rating WHERE id = :bookId")
+    suspend fun updateRating(bookId: Int, rating: Int?)
+
+    @Query("UPDATE books SET review = :review WHERE id = :bookId")
+    suspend fun updateReview(bookId: Int, review: String?)
+
+    @Query("UPDATE books SET isFavorite = :isFavorite WHERE id = :bookId")
+    suspend fun updateFavorite(bookId: Int, isFavorite: Boolean)
+
+    @Query("UPDATE books SET startDate = :startDate WHERE id = :bookId")
+    suspend fun updateStartDate(bookId: Int, startDate: Long?)
+
+    @Query("UPDATE books SET finishDate = :finishDate WHERE id = :bookId")
+    suspend fun updateFinishDate(bookId: Int, finishDate: Long?)
 }

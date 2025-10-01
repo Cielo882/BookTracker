@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cielo.applibros.R
 import com.cielo.applibros.domain.model.Book
+import com.cielo.applibros.domain.model.ReadingStatus
 
 class BookAdapter(
     private val onBookClick: (Book) -> Unit,
-    private val onReadClick: (Book) -> Unit,
-    private val onRatingChanged: (Book, Float) -> Unit
+    private val onStatusClick: (Book) -> Unit, // Cambiado de onReadClick
+    private val onRatingChanged: (Book, Float) -> Unit,
+    private val onFavoriteClick: ((Book) -> Unit)? = null
 ) : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
@@ -32,70 +34,105 @@ class BookAdapter(
     inner class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.tvTitle)
         private val authorTextView: TextView = itemView.findViewById(R.id.tvAuthor)
-        private val downloadCountTextView: TextView = itemView.findViewById(R.id.tvDownloadCount)
+        private val statusTextView: TextView = itemView.findViewById(R.id.tvStatus) // Nuevo
         private val coverImageView: ImageView = itemView.findViewById(R.id.ivCover)
-        private val readButton: ImageView = itemView.findViewById(R.id.ivRead)
-        private val ratingBar: RatingBar = itemView.findViewById(R.id.ratingBar) //
+        private val statusButton: ImageView = itemView.findViewById(R.id.ivStatus) // Cambió de ivRead
+        private val favoriteButton: ImageView? = itemView.findViewById(R.id.ivFavorite) // Nuevo, opcional
+        private val ratingBar: RatingBar = itemView.findViewById(R.id.ratingBar)
         private val ratingText: TextView = itemView.findViewById(R.id.tvRatingText)
+        private val reviewText: TextView? = itemView.findViewById(R.id.tvReview) // Nuevo, opcional
 
         fun bind(book: Book) {
             titleTextView.text = book.title
-            authorTextView.text = book.authors.joinToString(", ")
-            downloadCountTextView.text = "Descargas: ${book.downloadCount}"
+            authorTextView.text = book.authorsString
+
+            // Mostrar estado del libro
+            statusTextView.text = when (book.readingStatus) {
+                ReadingStatus.TO_READ -> "Por leer"
+                ReadingStatus.READING -> "Leyendo"
+                ReadingStatus.FINISHED -> "Terminado"
+            }
 
             // Cargar imagen de portada
-            book.coverUrl?.let { url ->
+            book.imageUrl?.let { url ->
                 Glide.with(itemView.context)
                     .load(url)
                     .placeholder(R.drawable.ic_book)
                     .into(coverImageView)
-            }?: run {
-                // Si no hay URL, mostrar placeholder directamente
+            } ?: run {
                 coverImageView.setImageResource(R.drawable.ic_book)
             }
 
-            // Configurar botón de Leido
-            readButton.setImageResource(
-                if (book.isRead) R.drawable.ic_check_filled
-                else R.drawable.ic_check_border
+            // Configurar botón de estado
+            statusButton.setImageResource(
+                when (book.readingStatus) {
+                    ReadingStatus.TO_READ -> R.drawable.ic_bookmark_border
+                    ReadingStatus.READING -> R.drawable.ic_menu_book
+                    ReadingStatus.FINISHED -> R.drawable.ic_check_filled
+                }
             )
 
-            // sistema de rating
-            // ========================================
-            if (book.isRead) {
-                // Solo mostrar rating si fue leido
+            // Configurar botón de favorito (si existe)
+            favoriteButton?.let { favBtn ->
+                favBtn.setImageResource(
+                    if (book.isFavorite) R.drawable.ic_favorite_filled
+                    else R.drawable.ic_favorite_border
+                )
+                favBtn.setOnClickListener {
+                    onFavoriteClick?.invoke(book)
+                }
+            }
+
+            // Sistema de rating y reseña
+            setupRatingAndReview(book)
+
+            // Listeners
+            itemView.setOnClickListener { onBookClick(book) }
+            statusButton.setOnClickListener { onStatusClick(book) }
+        }
+
+        private fun setupRatingAndReview(book: Book) {
+            if (book.readingStatus == ReadingStatus.FINISHED) {
+                // Solo mostrar rating si fue terminado
                 ratingBar.visibility = View.VISIBLE
                 ratingText.visibility = View.VISIBLE
 
                 // Configurar el rating actual
-                ratingBar.rating = book.rating
-                ratingText.text = if (book.rating > 0) {
-                    String.format("%.1f", book.rating)
+                val rating = book.rating?.toFloat() ?: 0f
+                ratingBar.rating = rating
+                ratingText.text = if (rating > 0) {
+                    String.format("%.1f", rating)
                 } else {
                     "Sin calificar"
                 }
 
                 // Listener para cambios en el rating
-                ratingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
+                ratingBar.setOnRatingBarChangeListener { _, newRating, fromUser ->
                     if (fromUser) {
-                        onRatingChanged(book, rating)
-                        ratingText.text = if (rating > 0) {
-                            String.format("%.1f", rating)
+                        onRatingChanged(book, newRating)
+                        ratingText.text = if (newRating > 0) {
+                            String.format("%.1f", newRating)
                         } else {
                             "Sin calificar"
                         }
                     }
                 }
+
+                // Mostrar reseña si existe
+                reviewText?.let { reviewTv ->
+                    if (!book.review.isNullOrBlank()) {
+                        reviewTv.text = book.review
+                        reviewTv.visibility = View.VISIBLE
+                    } else {
+                        reviewTv.visibility = View.GONE
+                    }
+                }
             } else {
-                // Ocultar rating si no se ha leido
+                // Ocultar rating si no se ha terminado
                 ratingBar.visibility = View.GONE
                 ratingText.visibility = View.GONE
+                reviewText?.visibility = View.GONE
             }
-
-
-            // Listeners
-            itemView.setOnClickListener { onBookClick(book) }
-            readButton.setOnClickListener { onReadClick(book) }
         }
     }
 
