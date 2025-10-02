@@ -1,54 +1,38 @@
 package com.cielo.applibros
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.cielo.applibros.data.local.database.AppDatabase
 import com.cielo.applibros.data.remote.api.GutendexApiService
 import com.cielo.applibros.data.repository.BookRepositoryImpl
-import com.cielo.applibros.domain.usecase.AddToReadUseCase
-import com.cielo.applibros.domain.usecase.GetBooksToReadUseCase
-import com.cielo.applibros.domain.usecase.GetBooksUseCase
-import com.cielo.applibros.domain.usecase.GetCurrentlyReadingUseCase
-import com.cielo.applibros.domain.usecase.GetFinishedBooksUseCase
-import com.cielo.applibros.domain.usecase.GetReadBooksUseCase
-import com.cielo.applibros.domain.usecase.GetUserStatsUseCase
-import com.cielo.applibros.domain.usecase.RemoveFromReadUseCase
-import com.cielo.applibros.domain.usecase.ToggleFavoriteUseCase
-import com.cielo.applibros.domain.usecase.UpdateBookRatingUseCase
-import com.cielo.applibros.domain.usecase.UpdateBookReviewUseCase
-import com.cielo.applibros.domain.usecase.UpdateBookStatusUseCase
-import com.cielo.applibros.presentation.adapter.BookAdapter
-import com.cielo.applibros.presentation.dialogs.SearchDialogFragment
-import com.cielo.applibros.presentation.fragments.FinishedFragment
-import com.cielo.applibros.presentation.fragments.ProfileFragment
-import com.cielo.applibros.presentation.fragments.ReadingFragment
-import com.cielo.applibros.presentation.fragments.ToReadFragment
+import com.cielo.applibros.domain.model.ReadingStatus
+import com.cielo.applibros.domain.usecase.*
+import com.cielo.applibros.presentation.fragments.*
 import com.cielo.applibros.presentation.viewmodel.BookViewModelUpdated
 import com.cielo.applibros.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    // Views
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
     private lateinit var bottomNavigation: BottomNavigationView
-    private lateinit var searchFab: FloatingActionButton
+    private lateinit var toolbar: Toolbar
 
-    // ViewModels (en un proyecto real usarías ViewModelProvider o Hilt)
-    lateinit var bookViewModel: BookViewModelUpdated
-    lateinit var profileViewModel: ProfileViewModel
+    // ViewModels
+    private lateinit var bookViewModel: BookViewModelUpdated
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         setupDependencies()
         setupViews()
+        setupToolbar()
+        setupDrawer()
         setupBottomNavigation()
-        setupFab()
 
         // Cargar el fragmento inicial
         if (savedInstanceState == null) {
@@ -119,8 +104,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navigationView = findViewById(R.id.nav_view)
         bottomNavigation = findViewById(R.id.bottom_navigation)
-        searchFab = findViewById(R.id.fab_search)
+        toolbar = findViewById(R.id.toolbar)
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+    }
+
+    private fun setupDrawer() {
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navigationView.setNavigationItemSelectedListener(this)
     }
 
     private fun setupBottomNavigation() {
@@ -134,23 +141,16 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(ReadingFragment())
                     true
                 }
+                R.id.nav_search -> {
+                    loadFragment(SearchFragment())
+                    true
+                }
                 R.id.nav_finished -> {
                     loadFragment(FinishedFragment())
                     true
                 }
-                R.id.nav_profile -> {
-                    loadFragment(ProfileFragment())
-                    true
-                }
                 else -> false
             }
-        }
-    }
-
-    private fun setupFab() {
-        searchFab.setOnClickListener {
-            val searchDialog = SearchDialogFragment()
-            searchDialog.show(supportFragmentManager, "search_dialog")
         }
     }
 
@@ -160,7 +160,70 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    // Métodos para compartir ViewModels con fragments
+    // Implementación del NavigationView.OnNavigationItemSelectedListener
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_profile -> {
+                loadFragment(ProfileFragment())
+            }
+            R.id.nav_statistics -> {
+                loadFragment(ProfileFragment()) // Por ahora usa ProfileFragment
+            }
+            R.id.nav_favorites -> {
+                // Cargar fragment de favoritos o filtrar libros favoritos
+                loadFragment(FinishedFragment())
+            }
+            R.id.nav_settings -> {
+                // TODO: Implementar pantalla de configuración
+                showComingSoon("Ajustes")
+            }
+            R.id.nav_about -> {
+                showAboutDialog()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    // Métodos públicos para compartir ViewModels con fragments
     fun getBookViewModel(): BookViewModelUpdated = bookViewModel
     fun getProfileViewModel(): ProfileViewModel = profileViewModel
+
+    // Método para navegar a una sección específica desde otros fragments
+    fun navigateToStatus(status: ReadingStatus) {
+        val itemId = when (status) {
+            ReadingStatus.TO_READ -> R.id.nav_to_read
+            ReadingStatus.READING -> R.id.nav_reading
+            ReadingStatus.FINISHED -> R.id.nav_finished
+        }
+        bottomNavigation.selectedItemId = itemId
+    }
+
+    private fun showComingSoon(feature: String) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Próximamente")
+            .setMessage("La función '$feature' estará disponible en una próxima actualización.")
+            .setPositiveButton("Entendido", null)
+            .show()
+    }
+
+    private fun showAboutDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Acerca de BookTracker")
+            .setMessage(
+                "BookTracker v2.0\n\n" +
+                        "Tu biblioteca personal para organizar y rastrear tus lecturas.\n\n" +
+                        "Desarrollado con ❤️ usando Clean Architecture y Kotlin"
+            )
+            .setPositiveButton("Cerrar", null)
+            .show()
+    }
 }

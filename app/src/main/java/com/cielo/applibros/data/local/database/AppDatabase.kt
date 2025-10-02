@@ -1,11 +1,11 @@
 package com.cielo.applibros.data.local.database
-
+import com.cielo.applibros.data.local.entities.Converters
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import android.content.Context
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.TypeConverters
+
 import com.cielo.applibros.data.local.dao.BookDao
 import com.cielo.applibros.data.local.entities.BookEntity
 
@@ -14,6 +14,7 @@ import com.cielo.applibros.data.local.entities.BookEntity
     version = 4, // La versión actual de tu schema
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
 

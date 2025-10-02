@@ -12,13 +12,13 @@
         android:title="Leyendo" />
 
     <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search"
+        android:title="Buscar" />
+
+    <item
         android:id="@+id/nav_finished"
         android:icon="@drawable/ic_check_circle"
         android:title="Leídos" />
-
-    <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_person"
-        android:title="Perfil" />
 
 </menu>

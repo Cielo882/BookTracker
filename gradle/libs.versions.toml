@@ -10,6 +10,8 @@ material = "1.12.0"
 supportAnnotations = "28.0.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+adapters = "3.2.0-alpha11"
+carUiLib = "2.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -21,6 +23,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-adapters = { group = "androidx.databinding", name = "adapters", version.ref = "adapters" }
+car-ui-lib = { group = "com.android.car.ui", name = "car-ui-lib", version.ref = "carUiLib" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

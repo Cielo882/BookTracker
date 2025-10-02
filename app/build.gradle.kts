@@ -14,12 +14,12 @@ plugins {
 
 android {
     namespace = "com.cielo.applibros"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.cielo.applibros"
-        minSdk =24
-        targetSdk =34
+        minSdk =28
+        targetSdk = 35
         versionCode =2
         versionName ="2.0"
 
@@ -36,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility =JavaVersion.VERSION_17
-                targetCompatibility =JavaVersion.VERSION_17
+        sourceCompatibility =JavaVersion.VERSION_11
+                targetCompatibility =JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
     buildFeatures {
         viewBinding = true
@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.support.annotations)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.adapters)
+    implementation(libs.car.ui.lib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +92,8 @@ dependencies {
     // Glide para cargar imágenes
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+
     // SwipeRefreshLayout - NUEVA
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
 }

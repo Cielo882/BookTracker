@@ -61,6 +61,9 @@ class BookDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Accede directamente a la propiedad de la Activity
+
+
         // Obtener ViewModel desde MainActivity
         viewModel = (activity as MainActivity).getBookViewModel()
 

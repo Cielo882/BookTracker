@@ -1,3 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BookTracker</string>
+
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir menú de navegación</string>
+    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
+    <string name="profile_image">Imagen de perfil</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_to_read">Por Leer</string>
+    <string name="nav_reading">Leyendo</string>
+    <string name="nav_search">Buscar</string>
+    <string name="nav_finished">Leídos</string>
+
+    <!-- Drawer Menu -->
+    <string name="nav_profile">Mi Perfil</string>
+    <string name="nav_statistics">Estadísticas</string>
+    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="nav_about">Acerca de</string>
+
+    <!-- Search Fragment -->
+    <string name="search_hint">Título, autor o tema...</string>
+    <string name="search_button">Buscar</string>
+    <string name="search_empty_title">Busca tu próximo libro</string>
+    <string name="search_empty_subtitle">Explora miles de libros por título, autor o tema</string>
+    <string name="search_no_results">No se encontraron resultados</string>
+    <string name="search_error">Error al buscar</string>
+
+    <!-- Book Actions -->
+    <string name="add_to_to_read">Por leer</string>
+    <string name="add_to_reading">Leyendo</string>
+    <string name="add_to_finished">Terminado</string>
+    <string name="mark_as_favorite">Marcar como favorito</string>
+    <string name="remove_favorite">Quitar de favoritos</string>
+
+    <!-- Book Detail -->
+    <string name="reading_status">Estado de lectura</string>
+    <string name="rating">Calificación</string>
+    <string name="my_review">Mi reseña</string>
+    <string name="write_review_hint">Escribe tu reseña...</string>
+    <string name="mark_favorite">Marcar como favorito</string>
+    <string name="started_on">Iniciado:</string>
+    <string name="finished_on">Terminado:</string>
+    <string name="save">Guardar</string>
+    <string name="close">Cerrar</string>
+
+    <!-- Profile -->
+    <string name="my_statistics">Mis Estadísticas</string>
+    <string name="total_read">Leídos</string>
+    <string name="total_to_read">Por leer</string>
+    <string name="average_rating">Promedio</string>
+    <string name="currently_reading">Leyendo Actualmente</string>
+    <string name="my_favorites">Mis Favoritos</string>
+    <string name="no_books_yet">Aún no tienes libros aquí</string>
+
+    <!-- Common -->
+    <string name="loading">Cargando...</string>
+    <string name="error">Error</string>
+    <string name="retry">Reintentar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">Aceptar</string>
+    <string name="understood">Entendido</string>
+    <string name="coming_soon">Próximamente</string>
+
+    <!-- Messages -->
+    <string name="book_added">¡Libro agregado!</string>
+    <string name="book_removed">Libro eliminado</string>
+    <string name="book_updated">Libro actualizado</string>
+    <string name="continue_searching">Continuar buscando</string>
+    <string name="view_section">Ver</string>
+
+    <!-- About -->
+    <string name="about_app">Acerca de BookTracker</string>
+    <string name="about_message">BookTracker v2.0\n\nTu biblioteca personal para organizar y rastrear tus lecturas.\n\nDesarrollado con ❤️ usando Clean Architecture y Kotlin</string>
+
+    <!-- Empty States -->
+    <string name="empty_to_read">No tienes libros por leer.\n¡Busca y agrega algunos!</string>
+    <string name="empty_reading">No estás leyendo ningún libro actualmente.</string>
+    <string name="empty_finished">Aún no has terminado ningún libro.\n¡Empieza a leer!</string>
+    <string name="empty_favorites">No tienes favoritos.\nMarca tus libros terminados como favoritos.</string>
 </resources>
