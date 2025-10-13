@@ -10,14 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cielo.applibros.MainActivity
 import com.cielo.applibros.R
-import com.cielo.applibros.presentation.adapter.BookAdapter
+import com.cielo.applibros.presentation.adapter.CompactBookAdapter
+import com.cielo.applibros.presentation.dialogs.BookDetailDialogFragment
 import com.cielo.applibros.presentation.viewmodel.ProfileViewModel
 
 class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: ProfileViewModel
-    private lateinit var currentlyReadingAdapter: BookAdapter
-    private lateinit var favoritesAdapter: BookAdapter
+    private lateinit var currentlyReadingAdapter: CompactBookAdapter
+    private lateinit var favoritesAdapter: CompactBookAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +31,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Obtener ViewModel desde MainActivity
         viewModel = (activity as MainActivity).getProfileViewModel()
 
         setupViews(view)
@@ -40,29 +40,37 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupViews(view: View) {
-        // Configurar adapters para listas horizontales
-        currentlyReadingAdapter = BookAdapter(
-            onBookClick = { /* Manejar clic */ },
-            onStatusClick = { /* Manejar clic */ },
-            onRatingChanged = { _, _ -> /* No aplicable aquí */ }
-        )
-
-        favoritesAdapter = BookAdapter(
-            onBookClick = { /* Manejar clic */ },
-            onStatusClick = { /* Manejar clic */ },
-            onRatingChanged = { _, _ -> /* No aplicable aquí */ }
-        )
-
-        // RecyclerView para libros actuales (horizontal)
-        view.findViewById<RecyclerView>(R.id.rvCurrentlyReading).apply {
-            adapter = currentlyReadingAdapter
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        // Crear adaptadores compactos
+        currentlyReadingAdapter = CompactBookAdapter { book ->
+            val dialog = BookDetailDialogFragment.newInstance(book)
+            dialog.show(parentFragmentManager, "book_detail")
         }
 
-        // RecyclerView para favoritos (horizontal)
+        favoritesAdapter = CompactBookAdapter { book ->
+            val dialog = BookDetailDialogFragment.newInstance(book)
+            dialog.show(parentFragmentManager, "book_detail")
+        }
+
+        // Configurar RecyclerView para "Leyendo Actualmente"
+        view.findViewById<RecyclerView>(R.id.rvCurrentlyReading).apply {
+            adapter = currentlyReadingAdapter
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            setHasFixedSize(true)
+        }
+
+        // Configurar RecyclerView para "Mis Favoritos"
         view.findViewById<RecyclerView>(R.id.rvFavorites).apply {
             adapter = favoritesAdapter
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            setHasFixedSize(true)
         }
     }
 

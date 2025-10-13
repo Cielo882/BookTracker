@@ -86,7 +86,7 @@ class BookDetailDialogFragment : DialogFragment() {
         cbFavorite = view.findViewById(R.id.cbFavorite)
         tvStartDate = view.findViewById(R.id.tvStartDate)
         tvFinishDate = view.findViewById(R.id.tvFinishDate)
-        btnSave = view.findViewById(R.id.btnSave)
+        btnSave = view.findViewById(R.id.btnSave) 
         btnClose = view.findViewById(R.id.btnClose)
     }
 
@@ -114,7 +114,9 @@ class BookDetailDialogFragment : DialogFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Mostrar/ocultar rating según el estado
                 val shouldShowRating = position == 2 // Terminado
-                ratingBar.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
+                //ratingBar.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
+                ratingBar.visibility = if (shouldShowRating) View.VISIBLE else View.INVISIBLE
+
                 cbFavorite.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
                 etReview.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
             }
@@ -196,10 +198,13 @@ class BookDetailDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+
+        val displayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels * 0.95).toInt() // 95% del ancho
+        val height = (displayMetrics.heightPixels * 0.85).toInt() // 85% del alto
+
+        dialog.window?.setLayout(width, height)
+
         return dialog
     }
 }

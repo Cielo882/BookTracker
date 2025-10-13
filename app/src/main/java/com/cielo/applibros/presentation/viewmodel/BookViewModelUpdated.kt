@@ -105,8 +105,8 @@ class BookViewModelUpdated(
     fun updateBookRating(bookId: Int, rating: Int) {
         viewModelScope.launch {
             try {
-                updateBookRatingUseCase(bookId, rating.toFloat())
-                // Las LiveData se actualizarán automáticamente
+                updateBookRatingUseCase(bookId, rating)
+                loadBooksByStatus(ReadingStatus.FINISHED)
             } catch (e: Exception) {
                 _error.value = e.message
             }

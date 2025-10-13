@@ -33,6 +33,12 @@ interface BookDao {
     fun getBooksToRead(): LiveData<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE readingStatus = 'READING' ORDER BY startDate DESC")
+    suspend fun getCurrentlyReadingList(): List<BookEntity>
+
+    @Query("SELECT * FROM books WHERE isFavorite = 1 AND readingStatus = 'FINISHED' LIMIT 3")
+    suspend fun getFavoriteBooksList(): List<BookEntity>
+
+    @Query("SELECT * FROM books WHERE readingStatus = 'READING' ORDER BY startDate DESC")
     fun getCurrentlyReading(): LiveData<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE readingStatus = 'FINISHED' ORDER BY finishDate DESC")

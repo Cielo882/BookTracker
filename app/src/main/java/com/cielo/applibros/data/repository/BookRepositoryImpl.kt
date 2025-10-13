@@ -1,3 +1,4 @@
+// data/repository/BookRepositoryImpl.kt
 package com.cielo.applibros.data.repository
 
 import androidx.lifecycle.LiveData
@@ -9,13 +10,12 @@ import com.cielo.applibros.domain.model.Book
 import com.cielo.applibros.domain.model.ReadingStatus
 import com.cielo.applibros.domain.repository.BookRepository
 
-
 class BookRepositoryImpl(
     private val apiService: GutendexApiService,
     private val bookDao: BookDao
 ) : BookRepository {
 
-    // Métodos existentes actualizados
+    // Métodos existentes
     override suspend fun searchBooks(query: String): List<Book> {
         val response = apiService.searchBooks(query)
         return response.results.map { dto ->
@@ -35,36 +35,16 @@ class BookRepositoryImpl(
     }
 
     override suspend fun removeFromReadList(book: Book) {
-        bookDao.getBookById(book.id)?.let { book ->
-            bookDao.deleteBook(book)
-        }    }
-
-    override suspend fun getReadBooks(): List<Book> {
-        return bookDao.getFinishedBooks().value?.map { it.toDomainModel() } ?: emptyList()
-    }
-
-    /*
-    override suspend fun getReadBooks(): List<Book> {
-        return bookDao.getFinishedBooks().value?.map { it.toDomainModel() } ?: emptyList()
-    }
-
-    override suspend fun addToRead(book: Book) {
-        bookDao.insertBook(book.toEntity())
-    }
-
-    override suspend fun removeFromRead(bookId: Int) {
-        bookDao.getBookById(bookId)?.let { book ->
-            bookDao.deleteBook(book)
+        bookDao.getBookById(book.id)?.let { bookEntity ->
+            bookDao.deleteBook(bookEntity)
         }
     }
 
-    override suspend fun getBookById(id: Int): Book? {
-        return bookDao.getBookById(id)?.toDomainModel()
+    override suspend fun getReadBooks(): List<Book> {
+        return bookDao.getFinishedBooks().value?.map { it.toDomainModel() } ?: emptyList()
     }
 
-    override suspend fun updateBookRating(bookId: Int, rating: Float) {
-        bookDao.updateRating(bookId, rating.toInt())
-    }*/
+
 
     // Nuevos métodos
     override fun getAllBooks(): LiveData<List<Book>> {
@@ -101,7 +81,6 @@ class BookRepositoryImpl(
         bookDao.updateReadingStatus(bookId, status)
     }
 
-
     override suspend fun updateRating(bookId: Int, rating: Int?) {
         bookDao.updateRating(bookId, rating)
     }
@@ -136,18 +115,12 @@ class BookRepositoryImpl(
     }
 
     override suspend fun getCurrentlyReading(): List<Book> {
-        return bookDao.getCurrentlyReading().value?.map { it.toDomainModel() } ?: emptyList()
+        return bookDao.getCurrentlyReadingList().map { it.toDomainModel() }
     }
 
     override suspend fun getFavoriteBooks(): List<Book> {
-        return bookDao.getFavoriteBooks().value?.map { it.toDomainModel() } ?: emptyList()
+        return bookDao.getFavoriteBooksList().map { it.toDomainModel() }
     }
-
-    override fun updateBookRating(bookId: Int, rating: Float) {
-        TODO("Not yet implemented")
-    }
-
-
 }
 
 // Extension functions para conversiones
