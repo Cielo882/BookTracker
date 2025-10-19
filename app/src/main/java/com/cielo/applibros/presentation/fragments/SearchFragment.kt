@@ -28,6 +28,8 @@ class SearchFragment : Fragment() {
     private lateinit var rvSearchResults: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyState: LinearLayout
+    private var existingBookIds: Set<Int> = emptySet()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +49,8 @@ class SearchFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
         setupListeners()
+
+        loadExistingBookIds()
     }
 
     private fun setupViews(view: View) {
@@ -58,14 +62,16 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchBookAdapter { book, status ->
-            // Agregar libro con el estado seleccionado
-            val bookWithStatus = book.copy(readingStatus = status)
-            viewModel.addToRead(bookWithStatus)
-
-            // Mostrar confirmación
-            showBookAddedConfirmation(book.title, status)
-        }
+        searchAdapter = SearchBookAdapter(
+            onAddBook = { book, status ->
+                val bookWithStatus = book.copy(readingStatus = status)
+                viewModel.addToRead(bookWithStatus)
+                showBookAddedConfirmation(book.title, status)
+                // NUEVO: Actualizar lista de IDs existentes
+                loadExistingBookIds()
+            },
+            existingBookIds = existingBookIds // Pasar los IDs
+        )
 
         rvSearchResults.apply {
             adapter = searchAdapter
@@ -115,6 +121,39 @@ class SearchFragment : Fragment() {
             true
         }
     }
+
+    // Cargar todos los IDs de libros existentes
+    private fun loadExistingBookIds() {
+        viewModel.booksToRead.observe(viewLifecycleOwner) { toReadBooks ->
+            viewModel.currentlyReading.observe(viewLifecycleOwner) { readingBooks ->
+                viewModel.finishedBooks.observe(viewLifecycleOwner) { finishedBooks ->
+                    // Combinar todos los IDs
+                    existingBookIds = (
+                            toReadBooks.map { it.id } +
+                                    readingBooks.map { it.id } +
+                                    finishedBooks.map { it.id }
+                            ).toSet()
+
+                    // Actualizar el adaptador con los nuevos IDs
+                    if (::searchAdapter.isInitialized) {
+                        searchAdapter = SearchBookAdapter(
+                            onAddBook = { book, status ->
+                                val bookWithStatus = book.copy(readingStatus = status)
+                                viewModel.addToRead(bookWithStatus)
+                                showBookAddedConfirmation(book.title, status)
+                                loadExistingBookIds()
+                            },
+                            existingBookIds = existingBookIds
+                        )
+                        rvSearchResults.adapter = searchAdapter
+                        // Re-submitir la lista actual
+                        viewModel.books.value?.let { searchAdapter.submitList(it) }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun performSearch() {
         val query = etSearch.text.toString().trim()

@@ -54,12 +54,32 @@ class SearchDialogFragment : DialogFragment() {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchBookAdapter { book, status ->
-            // Agregar libro con el estado seleccionado
-            val bookWithStatus = book.copy(readingStatus = status)
-            viewModel.addToRead(bookWithStatus)
-            dismiss()
+        // Cargar IDs de libros existentes
+        val allBookIds = mutableSetOf<Int>()
+
+        viewModel.booksToRead.observe(viewLifecycleOwner) { books ->
+            allBookIds.addAll(books.map { it.id })
+            updateAdapter(allBookIds)
         }
+        viewModel.currentlyReading.observe(viewLifecycleOwner) { books ->
+            allBookIds.addAll(books.map { it.id })
+            updateAdapter(allBookIds)
+        }
+        viewModel.finishedBooks.observe(viewLifecycleOwner) { books ->
+            allBookIds.addAll(books.map { it.id })
+            updateAdapter(allBookIds)
+        }
+    }
+
+    private fun updateAdapter(existingBookIds: Set<Int>) {
+        searchAdapter = SearchBookAdapter(
+            onAddBook = { book, status ->
+                val bookWithStatus = book.copy(readingStatus = status)
+                viewModel.addToRead(bookWithStatus)
+                dismiss()
+            },
+            existingBookIds = existingBookIds
+        )
 
         rvSearchResults.apply {
             adapter = searchAdapter
