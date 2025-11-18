@@ -9,17 +9,7 @@ class UpdateBookStatusUseCase(
     private val repository: BookRepository
 ) {
     suspend operator fun invoke(bookId: Int, status: ReadingStatus) {
+        // Solo actualizar el estado, SIN tocar las fechas
         repository.updateReadingStatus(bookId, status)
-
-        // Actualizar fechas automáticamente
-        when (status) {
-            ReadingStatus.READING -> {
-                repository.updateStartDate(bookId, System.currentTimeMillis())
-            }
-            ReadingStatus.FINISHED -> {
-                repository.updateFinishDate(bookId, System.currentTimeMillis())
-            }
-            else -> { /* No action needed */ }
-        }
     }
 }

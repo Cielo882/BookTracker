@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_small">16dp</dimen>
+    <dimen name="spacing_medium">24dp</dimen>
+    <dimen name="spacing_large">40dp</dimen>
+    <dimen name="dialog_padding">40dp</dimen>
+
+    <!-- Book Cover -->
+    <dimen name="book_cover_width">160dp</dimen>
+    <dimen name="book_cover_height">240dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="text_title">24sp</dimen>
+    <dimen name="text_label">20sp</dimen>
+    <dimen name="text_body">18sp</dimen>
+    <dimen name="text_small">16sp</dimen>
+    <dimen name="text_button">18sp</dimen>
+
+    <!-- Component Sizes -->
+    <dimen name="spinner_height">62dp</dimen>
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_min_width">150dp</dimen>
+    <dimen name="checkbox_height">56dp</dimen>
+    <dimen name="review_min_height">150dp</dimen>
+</resources>

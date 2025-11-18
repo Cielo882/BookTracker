@@ -17,6 +17,8 @@ import com.cielo.applibros.domain.usecase.ToggleFavoriteUseCase
 import com.cielo.applibros.domain.usecase.UpdateBookRatingUseCase
 import com.cielo.applibros.domain.usecase.UpdateBookReviewUseCase
 import com.cielo.applibros.domain.usecase.UpdateBookStatusUseCase
+import com.cielo.applibros.domain.usecase.UpdateFinishDateUseCase
+import com.cielo.applibros.domain.usecase.UpdateStartDateUseCase
 import kotlinx.coroutines.launch
 
 class BookViewModelUpdated(
@@ -31,7 +33,9 @@ class BookViewModelUpdated(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getBooksToReadUseCase: GetBooksToReadUseCase,
     private val getCurrentlyReadingUseCase: GetCurrentlyReadingUseCase,
-    private val getFinishedBooksUseCase: GetFinishedBooksUseCase
+    private val getFinishedBooksUseCase: GetFinishedBooksUseCase,
+    private val updateStartDateUseCase: UpdateStartDateUseCase,
+    private val updateFinishDateUseCase: UpdateFinishDateUseCase
 ) : ViewModel() {
 
     // LiveData para resultados de búsqueda
@@ -139,6 +143,26 @@ class BookViewModelUpdated(
         viewModelScope.launch {
             try {
                 toggleFavoriteUseCase(bookId, isFavorite)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun updateStartDate(bookId: Int, startDate: Long) {
+        viewModelScope.launch {
+            try {
+                updateStartDateUseCase(bookId, startDate)
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun updateFinishDate(bookId: Int, finishDate: Long) {
+        viewModelScope.launch {
+            try {
+                updateFinishDateUseCase(bookId, finishDate)
             } catch (e: Exception) {
                 _error.value = e.message
             }

@@ -84,6 +84,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val getCurrentlyReadingUseCase = GetCurrentlyReadingUseCase(repository)
         val getFinishedBooksUseCase = GetFinishedBooksUseCase(repository)
         val getUserStatsUseCase = GetUserStatsUseCase(repository)
+        val updateStartDateUseCase = UpdateStartDateUseCase(repository)
+        val updateFinishDateUseCase = UpdateFinishDateUseCase(repository)
 
         // ViewModels
         bookViewModel = BookViewModelUpdated(
@@ -97,7 +99,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             toggleFavoriteUseCase,
             getBooksToReadUseCase,
             getCurrentlyReadingUseCase,
-            getFinishedBooksUseCase
+            getFinishedBooksUseCase,
+            updateStartDateUseCase,
+            updateFinishDateUseCase
         )
 
         profileViewModel = ProfileViewModel(getUserStatsUseCase)
@@ -167,7 +171,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 loadFragment(ProfileFragment())
             }
             R.id.nav_statistics -> {
-                loadFragment(ProfileFragment()) // Por ahora usa ProfileFragment
+                loadFragment(StatisticsFragment()) // estatics
             }
             R.id.nav_favorites -> {
                 // Cargar fragment de favoritos o filtrar libros favoritos

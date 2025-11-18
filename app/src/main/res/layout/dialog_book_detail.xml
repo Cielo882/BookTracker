@@ -1,31 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/dialog_bg">
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/dialog_padding">
 
         <!-- Header con imagen y título -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_large">
 
-            <ImageView
-                android:id="@+id/ivCover"
-                android:layout_width="100dp"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:background="@drawable/book_placeholder_bg"
-                android:layout_marginEnd="16dp" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/book_cover_width"
+                android:layout_height="@dimen/book_cover_height"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="4dp"
+                android:layout_marginEnd="@dimen/spacing_medium">
+
+                <ImageView
+                    android:id="@+id/ivCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -37,28 +45,22 @@
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_title"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
-                    android:layout_marginBottom="8dp" />
+                    android:maxLines="4"
+                    android:ellipsize="end"
+                    android:lineSpacingMultiplier="1.1"
+                    android:layout_marginBottom="@dimen/spacing_small" />
 
                 <TextView
                     android:id="@+id/tvAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_body"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:id="@+id/tvStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:textColor="@color/brown_dark"
-                    android:background="@drawable/status_badge_bg"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp" />
+                    android:maxLines="2"
+                    android:ellipsize="end" />
 
             </LinearLayout>
 
@@ -69,90 +71,218 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Estado de lectura"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_label"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/spacing_small" />
 
         <Spinner
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_bg" />
+            android:layout_height="@dimen/spinner_height"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:background="@drawable/spinner_bg"
+            android:paddingHorizontal="@dimen/spacing_medium" />
 
-        <!-- Rating (solo visible para libros terminados) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calificación"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="8dp" />
-
-        <RatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5"
-            android:stepSize="1"
-            android:layout_marginBottom="16dp"
-            android:progressTint="@color/rating_color" />
-
-        <!-- Reseña -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mi reseña"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="8dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Fecha de inicio (Leyendo y Terminado) -->
+        <LinearLayout
+            android:id="@+id/startDateContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Escribe tu reseña...">
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="@dimen/spacing_medium">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etReview"
+            <TextView
+                android:id="@+id/tvStartDateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha de inicio"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="@dimen/spacing_small" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:maxLines="4"
-                android:minLines="3" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/date_field_bg"
+                android:padding="12dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/brown_dark"
+                    android:layout_marginEnd="12dp" />
 
-        <!-- Favorito (solo para libros terminados) -->
+                <TextView
+                    android:id="@+id/tvStartDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sin fecha"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/text_primary" />
+
+                <ImageButton
+                    android:id="@+id/btnEditStartDate"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_edit"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/brown_dark"
+                    android:contentDescription="Editar fecha" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Fecha de término (solo Terminado) -->
+        <LinearLayout
+            android:id="@+id/finishDateContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <TextView
+                android:id="@+id/tvFinishDateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha de término"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="@dimen/spacing_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/date_field_bg"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/brown_dark"
+                    android:layout_marginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/tvFinishDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sin fecha"
+                    android:textSize="@dimen/text_body"
+                    android:textColor="@color/text_primary" />
+
+                <ImageButton
+                    android:id="@+id/btnEditFinishDate"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_edit"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/brown_dark"
+                    android:contentDescription="Editar fecha" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Rating -->
+        <LinearLayout
+            android:id="@+id/ratingContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calificación"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="@dimen/spacing_small" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="1"
+                android:scaleX="1.2"
+                android:scaleY="1.2"
+                android:transformPivotX="0dp"
+                android:transformPivotY="0dp"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:progressTint="@color/rating_color" />
+
+        </LinearLayout>
+
+        <!-- Reseña -->
+        <LinearLayout
+            android:id="@+id/reviewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mi reseña"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="@dimen/spacing_small" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:hint="Escribe tu reseña..."
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:minLines="3"
+                    android:minHeight="@dimen/review_min_height"
+                    android:textSize="@dimen/text_body"
+                    android:gravity="top|start" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Favorito -->
         <CheckBox
             android:id="@+id/cbFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Marcar como favorito"
+            android:textSize="@dimen/text_body"
             android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp"
-            android:buttonTint="@color/brown_dark" />
-
-        <!-- Fechas -->
-        <TextView
-            android:id="@+id/tvStartDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="4dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvFinishDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="24dp"
+            android:minHeight="@dimen/checkbox_height"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:buttonTint="@color/brown_dark"
             android:visibility="gone" />
 
         <!-- Botones -->
@@ -166,15 +296,22 @@
                 android:id="@+id/btnClose"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/button_height"
+                android:minWidth="@dimen/button_min_width"
                 android:text="Cerrar"
-                android:layout_marginEnd="12dp" />
+                android:textSize="@dimen/text_button"
+                android:textColor="@color/brown_dark"
+                app:strokeColor="@color/brown_dark"
+                android:layout_marginEnd="@dimen/spacing_small" />
 
             <Button
                 android:id="@+id/btnSave"
+                style="@style/Widget.Material3.Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Guardar"
+                android:layout_height="@dimen/button_height"
+                android:minWidth="@dimen/button_min_width"
+                android:text="GUARDAR"
+                android:textSize="@dimen/text_button"
                 app:backgroundTint="@color/brown_dark" />
 
         </LinearLayout>

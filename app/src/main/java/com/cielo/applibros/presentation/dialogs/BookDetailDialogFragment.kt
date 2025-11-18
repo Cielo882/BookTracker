@@ -1,5 +1,6 @@
 package com.cielo.applibros.presentation.dialogs
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,24 +15,49 @@ import com.cielo.applibros.R
 import com.cielo.applibros.domain.model.Book
 import com.cielo.applibros.domain.model.ReadingStatus
 import com.cielo.applibros.presentation.viewmodel.BookViewModelUpdated
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.textfield.TextInputLayout
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BookDetailDialogFragment : DialogFragment() {
+class BookDetailDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var viewModel: BookViewModelUpdated
     private var book: Book? = null
 
+    // Fechas
+    private var startDateMillis: Long? = null
+    private var finishDateMillis: Long? = null
+
     private lateinit var ivCover: ImageView
     private lateinit var tvTitle: TextView
     private lateinit var tvAuthor: TextView
-    private lateinit var tvStatus: TextView
     private lateinit var spinnerStatus: Spinner
+
+    // Campos condicionales
+    private lateinit var ratingContainer: LinearLayout
     private lateinit var ratingBar: RatingBar
+
+    private lateinit var reviewContainer: LinearLayout
+    private lateinit var tilReview: TextInputLayout
     private lateinit var etReview: TextInputEditText
+
     private lateinit var cbFavorite: CheckBox
+
+    // Contenedores de fechas
+    private lateinit var startDateContainer: LinearLayout
+    private lateinit var finishDateContainer: LinearLayout
+
+    private lateinit var tvStartDateLabel: TextView
     private lateinit var tvStartDate: TextView
+    private lateinit var btnEditStartDate: ImageButton
+
+    private lateinit var tvFinishDateLabel: TextView
     private lateinit var tvFinishDate: TextView
+    private lateinit var btnEditFinishDate: ImageButton
+
     private lateinit var btnSave: Button
     private lateinit var btnClose: Button
 
@@ -44,7 +70,6 @@ class BookDetailDialogFragment : DialogFragment() {
                 putInt(ARG_BOOK_ID, book.id)
             }
             fragment.arguments = bundle
-            // Guardamos el libro temporalmente para mostrarlo
             fragment.book = book
             return fragment
         }
@@ -61,17 +86,28 @@ class BookDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Accede directamente a la propiedad de la Activity
+        dialog?.setOnShowListener { dialogInterface ->
+            val bottomSheetDialog = dialogInterface as? BottomSheetDialog
+            val bottomSheet = bottomSheetDialog?.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            )
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true
 
+                val layoutParams = it.layoutParams
+                layoutParams.height = (resources.displayMetrics.heightPixels * 0.9).toInt()
+                it.layoutParams = layoutParams
+            }
+        }
 
-        // Obtener ViewModel desde MainActivity
         viewModel = (activity as MainActivity).getBookViewModel()
 
         setupViews(view)
         setupStatusSpinner()
         setupListeners()
 
-        // Mostrar datos del libro
         book?.let { populateViews(it) }
     }
 
@@ -79,14 +115,30 @@ class BookDetailDialogFragment : DialogFragment() {
         ivCover = view.findViewById(R.id.ivCover)
         tvTitle = view.findViewById(R.id.tvTitle)
         tvAuthor = view.findViewById(R.id.tvAuthor)
-        tvStatus = view.findViewById(R.id.tvStatus)
         spinnerStatus = view.findViewById(R.id.spinnerStatus)
+
+        ratingContainer = view.findViewById(R.id.ratingContainer)
         ratingBar = view.findViewById(R.id.ratingBar)
+
+        reviewContainer = view.findViewById(R.id.reviewContainer)
+        tilReview = view.findViewById(R.id.tilReview)
         etReview = view.findViewById(R.id.etReview)
+
         cbFavorite = view.findViewById(R.id.cbFavorite)
+
+        // Contenedores de fechas
+        startDateContainer = view.findViewById(R.id.startDateContainer)
+        finishDateContainer = view.findViewById(R.id.finishDateContainer)
+
+        tvStartDateLabel = view.findViewById(R.id.tvStartDateLabel)
         tvStartDate = view.findViewById(R.id.tvStartDate)
+        btnEditStartDate = view.findViewById(R.id.btnEditStartDate)
+
+        tvFinishDateLabel = view.findViewById(R.id.tvFinishDateLabel)
         tvFinishDate = view.findViewById(R.id.tvFinishDate)
-        btnSave = view.findViewById(R.id.btnSave) 
+        btnEditFinishDate = view.findViewById(R.id.btnEditFinishDate)
+
+        btnSave = view.findViewById(R.id.btnSave)
         btnClose = view.findViewById(R.id.btnClose)
     }
 
@@ -112,16 +164,111 @@ class BookDetailDialogFragment : DialogFragment() {
 
         spinnerStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                // Mostrar/ocultar rating según el estado
-                val shouldShowRating = position == 2 // Terminado
-                //ratingBar.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
-                ratingBar.visibility = if (shouldShowRating) View.VISIBLE else View.INVISIBLE
-
-                cbFavorite.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
-                etReview.visibility = if (shouldShowRating) View.VISIBLE else View.GONE
+                updateVisibilityBasedOnStatus(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // DatePickers
+        btnEditStartDate.setOnClickListener {
+            showStartDatePicker()
+        }
+
+        btnEditFinishDate.setOnClickListener {
+            showFinishDatePicker()
+        }
+    }
+
+    private fun updateVisibilityBasedOnStatus(position: Int) {
+        when (position) {
+            0 -> { // Por leer
+                ratingContainer.visibility = View.GONE
+                reviewContainer.visibility = View.GONE
+                cbFavorite.visibility = View.GONE
+                startDateContainer.visibility = View.GONE
+                finishDateContainer.visibility = View.GONE
+            }
+            1 -> { // Leyendo
+                ratingContainer.visibility = View.GONE
+                reviewContainer.visibility = View.GONE
+                cbFavorite.visibility = View.GONE
+                startDateContainer.visibility = View.VISIBLE
+                finishDateContainer.visibility = View.GONE
+            }
+            2 -> { // Terminado
+                ratingContainer.visibility = View.VISIBLE
+                reviewContainer.visibility = View.VISIBLE
+                cbFavorite.visibility = View.VISIBLE
+                startDateContainer.visibility = View.VISIBLE
+                finishDateContainer.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun showStartDatePicker() {
+        val calendar = Calendar.getInstance()
+        startDateMillis?.let { calendar.timeInMillis = it }
+
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                val selectedCalendar = Calendar.getInstance()
+                selectedCalendar.set(year, month, dayOfMonth)
+                startDateMillis = selectedCalendar.timeInMillis
+                updateStartDateDisplay()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    private fun showFinishDatePicker() {
+        val calendar = Calendar.getInstance()
+        finishDateMillis?.let { calendar.timeInMillis = it }
+
+        // Validar que la fecha de fin no sea antes de la fecha de inicio
+        val minDate = startDateMillis ?: calendar.timeInMillis
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                val selectedCalendar = Calendar.getInstance()
+                selectedCalendar.set(year, month, dayOfMonth)
+                finishDateMillis = selectedCalendar.timeInMillis
+                updateFinishDateDisplay()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        datePickerDialog.datePicker.minDate = minDate
+        datePickerDialog.show()
+    }
+
+    private fun updateStartDateDisplay() {
+        startDateMillis?.let { millis ->
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            tvStartDate.text = formatter.format(Date(millis))
+        } ?: run {
+            tvStartDate.text = "Sin fecha"
+        }
+    }
+
+    private fun updateFinishDateDisplay() {
+        finishDateMillis?.let { millis ->
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            tvFinishDate.text = formatter.format(Date(millis))
+
+            // Calcular días de lectura
+            startDateMillis?.let { startMillis ->
+                val days = ((millis - startMillis) / (1000 * 60 * 60 * 24)).toInt()
+                tvFinishDate.text = "${tvFinishDate.text} ($days días)"
+            }
+        } ?: run {
+            tvFinishDate.text = "Sin fecha"
         }
     }
 
@@ -129,7 +276,6 @@ class BookDetailDialogFragment : DialogFragment() {
         tvTitle.text = book.title
         tvAuthor.text = book.authorsString
 
-        // Cargar imagen
         book.imageUrl?.let { url ->
             Glide.with(this)
                 .load(url)
@@ -137,7 +283,6 @@ class BookDetailDialogFragment : DialogFragment() {
                 .into(ivCover)
         }
 
-        // Configurar spinner de estado
         val statusPosition = when (book.readingStatus) {
             ReadingStatus.TO_READ -> 0
             ReadingStatus.READING -> 1
@@ -145,27 +290,18 @@ class BookDetailDialogFragment : DialogFragment() {
         }
         spinnerStatus.setSelection(statusPosition)
 
-        // Configurar rating
         ratingBar.rating = book.rating?.toFloat() ?: 0f
-
-        // Configurar reseña
         etReview.setText(book.review ?: "")
-
-        // Configurar favorito
         cbFavorite.isChecked = book.isFavorite
 
-        // Mostrar fechas
-        val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        // Cargar fechas
+        startDateMillis = book.startDate
+        finishDateMillis = book.finishDate
 
-        book.startDate?.let { date ->
-            tvStartDate.text = "Iniciado: ${dateFormatter.format(Date(date))}"
-            tvStartDate.visibility = View.VISIBLE
-        }
+        updateStartDateDisplay()
+        updateFinishDateDisplay()
 
-        book.finishDate?.let { date ->
-            tvFinishDate.text = "Terminado: ${dateFormatter.format(Date(date))}"
-            tvFinishDate.visibility = View.VISIBLE
-        }
+        updateVisibilityBasedOnStatus(statusPosition)
     }
 
     private fun saveBookChanges(book: Book) {
@@ -176,35 +312,48 @@ class BookDetailDialogFragment : DialogFragment() {
             else -> ReadingStatus.TO_READ
         }
 
-        // Guardar cambios
         viewModel.updateBookStatus(book.id, newStatus)
 
-        if (newStatus == ReadingStatus.FINISHED) {
-            val rating = ratingBar.rating.toInt()
-            if (rating > 0) {
-                viewModel.updateBookRating(book.id, rating)
+        // Guardar fechas según el estado
+        when (newStatus) {
+            ReadingStatus.READING -> {
+                startDateMillis?.let {
+                    viewModel.updateStartDate(book.id, it)
+                }
+            }
+            ReadingStatus.FINISHED -> {
+                startDateMillis?.let {
+                    viewModel.updateStartDate(book.id, it)
+                }
+                finishDateMillis?.let {
+                    viewModel.updateFinishDate(book.id, it)
+                }
+
+                val ratingValue = ratingBar.rating.toInt()
+                if (ratingValue > 0) {
+                    viewModel.updateBookRating(book.id, ratingValue)
+                }
+
+                val review = etReview.text?.toString()?.trim()
+                if (!review.isNullOrBlank()) {
+                    viewModel.updateBookReview(book.id, review)
+                }
+
+                viewModel.toggleFavorite(book.id, cbFavorite.isChecked)
+            }
+            ReadingStatus.TO_READ -> {
+                // Si vuelve a "Por leer", limpiar fechas (usar 0L como marcador de 'sin fecha')
+                viewModel.updateStartDate(book.id, 0L)
+                viewModel.updateFinishDate(book.id, 0L)
             }
 
-            val review = etReview.text.toString().trim()
-            if (review.isNotBlank()) {
-                viewModel.updateBookReview(book.id, review)
-            }
-
-            viewModel.toggleFavorite(book.id, cbFavorite.isChecked)
+            else -> {}
         }
 
         dismiss()
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-
-        val displayMetrics = resources.displayMetrics
-        val width = (displayMetrics.widthPixels * 0.95).toInt() // 95% del ancho
-        val height = (displayMetrics.heightPixels * 0.85).toInt() // 85% del alto
-
-        dialog.window?.setLayout(width, height)
-
-        return dialog
+    override fun getTheme(): Int {
+        return R.style.BottomSheetDialogTheme
     }
 }

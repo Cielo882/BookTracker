@@ -80,4 +80,6 @@
     <string name="empty_reading">No estás leyendo ningún libro actualmente.</string>
     <string name="empty_finished">Aún no has terminado ningún libro.\n¡Empieza a leer!</string>
     <string name="empty_favorites">No tienes favoritos.\nMarca tus libros terminados como favoritos.</string>
+    <string name="book_cover">Portada del libro</string>
+
 </resources>
