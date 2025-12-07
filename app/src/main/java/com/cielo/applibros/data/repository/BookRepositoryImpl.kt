@@ -5,31 +5,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.cielo.applibros.data.local.dao.BookDao
 import com.cielo.applibros.data.local.entities.BookEntity
-import com.cielo.applibros.data.remote.api.GutendexApiService
+import com.cielo.applibros.data.local.preferences.SettingsPreferences
+import com.cielo.applibros.data.remote.UnifiedBookSearchService
 import com.cielo.applibros.domain.model.Book
 import com.cielo.applibros.domain.model.ReadingStatus
 import com.cielo.applibros.domain.repository.BookRepository
 
 class BookRepositoryImpl(
-    private val apiService: GutendexApiService,
-    private val bookDao: BookDao
+    private val unifiedSearchService: UnifiedBookSearchService, // CAMBIO
+    private val bookDao: BookDao,
+    private val settingsPreferences: SettingsPreferences // Add this line
 ) : BookRepository {
 
-    // Métodos existentes
     override suspend fun searchBooks(query: String): List<Book> {
-        val response = apiService.searchBooks(query)
-        return response.results.map { dto ->
-            Book(
-                id = dto.id,
-                title = dto.title,
-                authors = dto.authors.map { it.name },
-                subjects = dto.subjects,
-                languages = dto.languages,
-                formats = dto.formats
-            )
-        }
+        // OBTENER idioma desde SharedPreferences
+        val language = settingsPreferences.getSettings().language
+
+        return unifiedSearchService.searchBooks(query, language)
     }
 
+    // ... resto de métodos igual ...
     override suspend fun addToReadList(book: Book) {
         bookDao.insertBook(book.toEntity())
     }
@@ -44,9 +39,6 @@ class BookRepositoryImpl(
         return bookDao.getFinishedBooks().value?.map { it.toDomainModel() } ?: emptyList()
     }
 
-
-
-    // Nuevos métodos
     override fun getAllBooks(): LiveData<List<Book>> {
         return bookDao.getAllBooks().map { entities ->
             entities.map { it.toDomainModel() }
@@ -101,7 +93,6 @@ class BookRepositoryImpl(
         bookDao.updateFinishDate(bookId, finishDate)
     }
 
-    // Estadísticas
     override suspend fun getTotalBooksRead(): Int {
         return bookDao.getTotalBooksRead()
     }
@@ -123,7 +114,7 @@ class BookRepositoryImpl(
     }
 }
 
-// Extension functions para conversiones
+// Extension functions
 private fun BookEntity.toDomainModel(): Book {
     return Book(
         id = this.id,

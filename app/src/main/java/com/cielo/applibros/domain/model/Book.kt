@@ -12,7 +12,7 @@ data class Book(
     val readingStatus: ReadingStatus = ReadingStatus.TO_READ,
     val rating: Int? = null,
     val startDate: Long? = null,
-    val finishDate: Long? = null,
+    val finishDate: Long? =  null,
     val review: String? = null,
     val isFavorite: Boolean = false,
     val dateAdded: Long = System.currentTimeMillis()

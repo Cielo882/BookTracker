@@ -4,20 +4,28 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.drawable.DrawableCompat.applyTheme
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.cielo.applibros.data.local.database.AppDatabase
+import com.cielo.applibros.data.local.preferences.SettingsPreferences
+import com.cielo.applibros.data.remote.UnifiedBookSearchService
+import com.cielo.applibros.data.remote.api.GoogleBooksApiService
 import com.cielo.applibros.data.remote.api.GutendexApiService
+import com.cielo.applibros.data.remote.api.OpenLibraryApiService
 import com.cielo.applibros.data.repository.BookRepositoryImpl
 import com.cielo.applibros.domain.model.ReadingStatus
+import com.cielo.applibros.domain.model.ThemeMode
 import com.cielo.applibros.domain.usecase.*
 import com.cielo.applibros.presentation.fragments.*
 import com.cielo.applibros.presentation.viewmodel.BookViewModelUpdated
 import com.cielo.applibros.presentation.viewmodel.ProfileViewModel
+import com.cielo.applibros.presentation.viewmodel.SettingsViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -33,9 +41,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // ViewModels
     private lateinit var bookViewModel: BookViewModelUpdated
     private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var settingsViewModel: SettingsViewModel // NUEVO
+
+    private lateinit var settingsPreferences: SettingsPreferences // NUEVO
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // AGREGAR: Cargar tema antes de setContentView
+        settingsPreferences = SettingsPreferences(this)
+        applyTheme(settingsPreferences.getSettings().themeMode)
+
         setContentView(R.layout.activity_main)
 
         setupDependencies()
@@ -55,19 +72,47 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Configurar OkHttpClient
         val okHttpClient = NetworkHelper.createUnsafeOkHttpClient()
 
-        // Retrofit config
-        val retrofit = Retrofit.Builder()
+        // Retrofit para Gutendex
+        val gutendexRetrofit = Retrofit.Builder()
             .baseUrl(GutendexApiService.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val apiService = retrofit.create(GutendexApiService::class.java)
+        // Retrofit para Open Library
+        val openLibraryRetrofit = Retrofit.Builder()
+            .baseUrl(OpenLibraryApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        // Retrofit para Google Books
+        val googleBooksRetrofit = Retrofit.Builder()
+            .baseUrl(GoogleBooksApiService.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        // Crear servicios de API
+        val gutendexApi = gutendexRetrofit.create(GutendexApiService::class.java)
+        val openLibraryApi = openLibraryRetrofit.create(OpenLibraryApiService::class.java)
+        val googleBooksApi = googleBooksRetrofit.create(GoogleBooksApiService::class.java)
+
+
+        // Crear servicio unificado
+        val unifiedSearchService = UnifiedBookSearchService(
+            gutendexApi,
+            openLibraryApi,
+            googleBooksApi
+        )
+
         val database = AppDatabase.getDatabase(this)
         val bookDao = database.bookDao()
 
-        // Crear repository y los casos de uso
-        val repository = BookRepositoryImpl(apiService, bookDao)
+        val settingsPreferences = SettingsPreferences(applicationContext)
+
+        // Crear repository con el servicio unificado
+        val repository = BookRepositoryImpl(unifiedSearchService, bookDao, settingsPreferences)
 
         // Use cases existentes
         val getBooksUseCase = GetBooksUseCase(repository)
@@ -105,6 +150,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
 
         profileViewModel = ProfileViewModel(getUserStatsUseCase)
+
+        settingsViewModel = SettingsViewModel(settingsPreferences)
+
+    }
+    private fun applyTheme(theme: ThemeMode) {
+        val mode = when (theme) {
+            ThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            ThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            ThemeMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun setupViews() {
@@ -179,7 +235,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_settings -> {
                 // TODO: Implementar pantalla de configuración
-                showComingSoon("Ajustes")
+                loadFragment(SettingsFragment())
             }
             R.id.nav_about -> {
                 showAboutDialog()
@@ -200,6 +256,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // Métodos públicos para compartir ViewModels con fragments
     fun getBookViewModel(): BookViewModelUpdated = bookViewModel
     fun getProfileViewModel(): ProfileViewModel = profileViewModel
+    fun getSettingsViewModel(): SettingsViewModel = settingsViewModel
+
 
     // Método para navegar a una sección específica desde otros fragments
     fun navigateToStatus(status: ReadingStatus) {
