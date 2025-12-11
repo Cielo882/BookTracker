@@ -367,21 +367,67 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Lista detallada -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Detalles por Libro"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="12dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvBookStats"
+        <!-- Botón para desplegar gráfico -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnToggleChart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+            android:text="Ver Gráfico de Progreso"
+            android:textColor="@android:color/white"
+            app:icon="@drawable/ic_arrow_down"
+            app:iconGravity="start"
+            android:backgroundTint="@color/brown_dark"
+            app:cornerRadius="8dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Card con gráfico (inicialmente oculto) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardChart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/card_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📈 Progreso de Lectura - 2025"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp" />
+
+                <!-- Mensaje cuando no hay datos -->
+                <TextView
+                    android:id="@+id/tvNoData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="📊\n\nNo hay suficientes datos para\nmostrar el gráfico de este año"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="50dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

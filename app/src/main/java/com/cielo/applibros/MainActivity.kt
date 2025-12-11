@@ -227,14 +227,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 loadFragment(ProfileFragment())
             }
             R.id.nav_statistics -> {
-                loadFragment(StatisticsFragment()) // estatics
+                loadFragment(StatisticsFragment())
             }
             R.id.nav_favorites -> {
-                // Cargar fragment de favoritos o filtrar libros favoritos
                 loadFragment(FinishedFragment())
             }
+            R.id.nav_reading_log -> {
+                loadFragment(ReadingLogFragment()) // NUEVO
+            }
             R.id.nav_settings -> {
-                // TODO: Implementar pantalla de configuración
                 loadFragment(SettingsFragment())
             }
             R.id.nav_about -> {

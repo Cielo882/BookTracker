@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <!-- Sección de Usuario -->
     <group android:checkableBehavior="single">
-
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_person"
@@ -18,10 +18,16 @@
         <item
             android:id="@+id/nav_favorites"
             android:icon="@drawable/ic_favorite_filled"
+
             android:title="Favoritos" />
 
+        <item
+            android:id="@+id/nav_reading_log"
+            android:icon="@drawable/ic_book"
+            android:title="Registro General" />
     </group>
 
+    <!-- Divider -->
     <item android:title="Configuración">
         <menu>
             <item
@@ -35,5 +41,6 @@
                 android:title="Acerca de" />
         </menu>
     </item>
+
 
 </menu>

@@ -96,4 +96,7 @@ dependencies {
     // SwipeRefreshLayout - NUEVA
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+
+    // MPAndroidChart para gráficos
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cielo.applibros.MainActivity
 import com.cielo.applibros.R
 import com.cielo.applibros.domain.model.ReadingStatus
@@ -19,6 +20,7 @@ class FinishedFragment : Fragment() {
     private lateinit var viewModel: BookViewModelUpdated
     private lateinit var bookAdapter: BookAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,11 +33,28 @@ class FinishedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Obtener ViewModel desde MainActivity
         viewModel = (activity as MainActivity).getBookViewModel()
 
+        setupSwipeRefresh(view)
         setupRecyclerView(view)
         setupObservers()
+    }
+
+    private fun setupSwipeRefresh(view: View) {
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+        swipeRefresh.apply {
+            setColorSchemeResources(
+                R.color.brown_dark,
+                R.color.brown_medium,
+                R.color.brown_light
+            )
+
+            setOnRefreshListener {
+                view.postDelayed({
+                    isRefreshing = false
+                }, 800)
+            }
+        }
     }
 
     private fun setupRecyclerView(view: View) {
@@ -66,6 +85,7 @@ class FinishedFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.finishedBooks.observe(viewLifecycleOwner) { books ->
+            swipeRefresh.isRefreshing = false
             bookAdapter.submitList(books)
         }
     }

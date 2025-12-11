@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,12 +14,20 @@ import com.cielo.applibros.R
 import com.cielo.applibros.domain.model.Book
 import com.cielo.applibros.presentation.adapter.BookStatsAdapter
 import com.cielo.applibros.presentation.viewmodel.BookViewModelUpdated
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import java.util.*
 
 class StatisticsFragment : Fragment() {
 
     private lateinit var viewModel: BookViewModelUpdated
-    private lateinit var bookStatsAdapter: BookStatsAdapter
 
     // Estadísticas generales
     private lateinit var tvTotalBooksRead: TextView
@@ -32,10 +41,12 @@ class StatisticsFragment : Fragment() {
     // Estadísticas del año actual
     private lateinit var tvBooksThisYear: TextView
     private lateinit var tvBooksThisMonth: TextView
-    private lateinit var tvPagesThisYear: TextView // Si implementas páginas
 
-    // Lista de libros con estadísticas
-    private lateinit var rvBookStats: RecyclerView
+    // Gráfico desplegable
+    private lateinit var btnToggleChart: MaterialButton
+    private lateinit var cardChart: MaterialCardView
+    private lateinit var lineChart: LineChart
+    private var isChartVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,19 +62,16 @@ class StatisticsFragment : Fragment() {
         viewModel = (activity as MainActivity).getBookViewModel()
 
         setupViews(view)
-        setupRecyclerView()
+        setupChartToggle()
         observeData()
     }
 
     override fun onResume() {
         super.onResume()
-        // Forzar recarga de datos cuando se vuelve al fragment
         refreshStatistics()
     }
 
     private fun refreshStatistics() {
-        // Las LiveData se actualizarán automáticamente
-        // y triggearán los observadores
         viewModel.finishedBooks.value?.let { books ->
             calculateStatistics(books)
         }
@@ -83,16 +91,122 @@ class StatisticsFragment : Fragment() {
         tvBooksThisYear = view.findViewById(R.id.tvBooksThisYear)
         tvBooksThisMonth = view.findViewById(R.id.tvBooksThisMonth)
 
-        // RecyclerView
-        rvBookStats = view.findViewById(R.id.rvBookStats)
+        // Gráfico
+        btnToggleChart = view.findViewById(R.id.btnToggleChart)
+        cardChart = view.findViewById(R.id.cardChart)
+        lineChart = view.findViewById(R.id.lineChart)
     }
 
-    private fun setupRecyclerView() {
-        bookStatsAdapter = BookStatsAdapter()
-        rvBookStats.apply {
-            adapter = bookStatsAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+    private fun setupChartToggle() {
+        btnToggleChart.setOnClickListener {
+            isChartVisible = !isChartVisible
+
+            if (isChartVisible) {
+                cardChart.visibility = View.VISIBLE
+                btnToggleChart.text = "Ocultar Gráfico"
+                btnToggleChart.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_up)
+
+                // Generar gráfico si hay datos
+                viewModel.finishedBooks.value?.let { books ->
+                    setupMonthlyChart(books)
+                }
+            } else {
+                cardChart.visibility = View.GONE
+                btnToggleChart.text = "Ver Gráfico de Progreso"
+                btnToggleChart.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_down)
+            }
         }
+    }
+
+    private fun setupMonthlyChart(books: List<Book>) {
+        val monthlyData = calculateMonthlyReading(books)
+
+        // Si no hay datos, mostrar mensaje
+        if (monthlyData.all { it == 0 }) {
+            lineChart.visibility = View.GONE
+            cardChart.findViewById<TextView>(R.id.tvNoData)?.visibility = View.VISIBLE
+            return
+        }
+
+        cardChart.findViewById<TextView>(R.id.tvNoData)?.visibility = View.GONE
+        lineChart.visibility = View.VISIBLE
+
+        val entries = monthlyData.mapIndexed { index, count ->
+            Entry(index.toFloat(), count.toFloat())
+        }
+
+        val dataSet = LineDataSet(entries, "Libros leídos").apply {
+            color = ContextCompat.getColor(requireContext(), R.color.brown_dark)
+            setCircleColor(ContextCompat.getColor(requireContext(), R.color.brown_dark))
+            lineWidth = 3f
+            circleRadius = 5f
+            setDrawCircleHole(false)
+            valueTextSize = 11f
+            setDrawFilled(true)
+            fillColor = ContextCompat.getColor(requireContext(), R.color.brown_light)
+            fillAlpha = 100
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawValues(true)
+        }
+
+        lineChart.apply {
+            data = LineData(dataSet)
+            description.isEnabled = false
+            setTouchEnabled(true)
+            setScaleEnabled(false)
+            setPinchZoom(false)
+
+            // Configurar eje X
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = MonthAxisValueFormatter()
+                granularity = 1f
+                textSize = 11f
+                setDrawGridLines(false)
+                textColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+            }
+
+            // Configurar eje Y izquierdo
+            axisLeft.apply {
+                granularity = 1f
+                axisMinimum = 0f
+                textSize = 11f
+                textColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+            }
+
+            // Deshabilitar eje Y derecho
+            axisRight.isEnabled = false
+
+            // Leyenda
+            legend.apply {
+                verticalAlignment = Legend.LegendVerticalAlignment.TOP
+                horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+                textSize = 12f
+                textColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+            }
+
+            animateX(1000)
+            invalidate()
+        }
+    }
+
+    private fun calculateMonthlyReading(books: List<Book>): List<Int> {
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val monthlyCount = IntArray(12) { 0 }
+
+        books.forEach { book ->
+            book.finishDate?.let { finishDate ->
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = finishDate
+
+                if (calendar.get(Calendar.YEAR) == currentYear) {
+                    val month = calendar.get(Calendar.MONTH)
+                    monthlyCount[month]++
+                }
+            }
+        }
+
+        return monthlyCount.toList()
     }
 
     private fun observeData() {
@@ -136,7 +250,7 @@ class StatisticsFragment : Fragment() {
         if (booksWithDates.isNotEmpty()) {
             val readingDays = booksWithDates.map { book ->
                 val days = ((book.finishDate!! - book.startDate!!) / (1000 * 60 * 60 * 24)).toInt()
-                Pair(book, days)
+                Pair(book, if (days < 1) 1 else days)
             }
 
             // Promedio de días
@@ -154,9 +268,6 @@ class StatisticsFragment : Fragment() {
             tvSlowestBook.text = slowest?.let {
                 "${it.first.title} (${it.second} días)"
             } ?: "N/A"
-
-            // Mostrar lista ordenada por días
-            bookStatsAdapter.submitList(readingDays.sortedBy { it.second })
         } else {
             tvAverageReadingDays.text = "N/A"
             tvFastestBook.text = "N/A"
@@ -197,5 +308,18 @@ class StatisticsFragment : Fragment() {
         tvSlowestBook.text = "N/A"
         tvBooksThisYear.text = "0"
         tvBooksThisMonth.text = "0"
+    }
+
+    // Formatter para los meses
+    private class MonthAxisValueFormatter : ValueFormatter() {
+        private val months = arrayOf(
+            "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+            "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+        )
+
+        override fun getFormattedValue(value: Float): String {
+            val index = value.toInt()
+            return if (index in months.indices) months[index] else ""
+        }
     }
 }
