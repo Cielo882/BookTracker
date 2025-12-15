@@ -1,14 +1,119 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- ============================================ -->
+    <!-- TEMA PRINCIPAL - MODO OSCURO -->
+    <!-- ============================================ -->
     <style name="Theme.AppLibros" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
-        <!-- Atributos Material 3 -->
-        <item name="colorSurface">#121212</item>
-        <item name="colorOnSurface">@color/white</item>
-        <item name="colorOnSurfaceVariant">#CCCCCC</item>
+        <!-- Colores primarios -->
+        <item name="colorPrimary">@color/terracota_profunda</item>
+        <item name="colorOnPrimary">@color/texto_oscuro_primario</item>
+        <item name="colorPrimaryContainer">@color/terracota_oscura</item>
+        <item name="colorOnPrimaryContainer">@color/texto_oscuro_primario</item>
+
+        <!-- Colores secundarios -->
+        <item name="colorSecondary">@color/verde_bosque_claro</item>
+        <item name="colorOnSecondary">@color/texto_oscuro_primario</item>
+        <item name="colorSecondaryContainer">@color/dorado_opaco</item>
+        <item name="colorOnSecondaryContainer">@color/texto_oscuro_primario</item>
+
+        <!-- Colores terciarios -->
+        <item name="colorTertiary">@color/dorado_opaco</item>
+        <item name="colorOnTertiary">@color/marron_oscuro</item>
+
+        <!-- Colores de fondo y superficie -->
+        <item name="android:colorBackground">@color/marron_oscuro</item>
+        <item name="colorOnBackground">@color/texto_oscuro_primario</item>
+        <item name="colorSurface">@color/gris_marron</item>
+        <item name="colorOnSurface">@color/texto_oscuro_primario</item>
+        <item name="colorSurfaceVariant">@color/marron_suave</item>
+        <item name="colorOnSurfaceVariant">@color/texto_oscuro_secundario</item>
+
+        <!-- Barra de estado y navegación -->
+        <item name="android:statusBarColor">@color/terracota_profunda</item>
+        <item name="android:navigationBarColor">@color/gris_marron</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+
+        <!-- Outline y divisores -->
+        <item name="colorOutline">@color/divider_dark</item>
+        <item name="colorOutlineVariant">@color/marron_suave</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Elevación y sombras -->
+        <item name="elevationOverlayColor">@color/overlay_dark</item>
+
+        <!-- Componentes personalizados -->
+        <item name="chipStyle">@style/CustomChipStyle.Dark</item>
+        <item name="materialCardViewStyle">@style/CustomCardStyle.Dark</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigation.Dark</item>
+        <item name="toolbarStyle">@style/CustomToolbar.Dark</item>
     </style>
+
+    <!-- ============================================ -->
+    <!-- ESTILOS DE COMPONENTES MODO OSCURO -->
+    <!-- ============================================ -->
+
+    <!-- Toolbar modo oscuro -->
+    <style name="CustomToolbar.Dark" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/terracota_profunda</item>
+        <item name="titleTextColor">@color/texto_oscuro_primario</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- Bottom Navigation modo oscuro -->
+    <style name="CustomBottomNavigation.Dark" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/gris_marron</item>
+        <item name="itemIconTint">@color/bottom_nav_selector_dark</item>  <!-- CAMBIAR AQUÍ -->
+        <item name="itemTextColor">@color/bottom_nav_selector_dark</item>
+        <item name="elevation">6dp</item>
+        <item name="labelVisibilityMode">labeled</item>
+    </style>
+
+    <!-- Cards modo oscuro -->
+    <style name="CustomCardStyle.Dark" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/gris_marron</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <!-- Chips modo oscuro -->
+    <style name="CustomChipStyle.Dark" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/marron_suave</item>
+        <item name="android:textColor">@color/texto_oscuro_primario</item>
+    </style>
+
+    <!-- Botones modo oscuro -->
+    <style name="CustomButton.Dark" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/terracota_profunda</item>
+        <item name="android:textColor">@color/texto_oscuro_primario</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="CustomButton.Outlined.Dark" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/terracota_profunda</item>
+        <item name="android:textColor">@color/terracota_profunda</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <!-- Bottom Sheet modo oscuro -->
+    <style name="BottomSheetDialogTheme.Dark" parent="Theme.Material3.Dark.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle.Dark</item>
+        <item name="android:backgroundDimAmount">0.7</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle.Dark" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background_dark</item>
+        <item name="shapeAppearanceOverlay">@style/CustomBottomSheetShape</item>
+    </style>
+
+    <!-- TextInputLayout modo oscuro -->
+    <style name="CustomTextInputLayout.Dark" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/terracota_profunda</item>
+        <item name="hintTextColor">@color/texto_oscuro_secundario</item>
+    </style>
+
 </resources>

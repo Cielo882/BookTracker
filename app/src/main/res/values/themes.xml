@@ -1,14 +1,101 @@
-<resources>
-    <style name="Theme.AppLibros" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-        <!-- Atributos Material 3 -->
-        <item name="colorSurface">@color/white</item>
-        <item name="colorOnSurface">@color/black</item>
-        <item name="colorOnSurfaceVariant">#666666</item>
+    <!-- ============================================ -->
+    <!-- TEMA PRINCIPAL - MODO CLARO -->
+    <!-- ============================================ -->
+    <style name="Theme.AppLibros" parent="Theme.Material3.Light.NoActionBar">
+
+        <!-- Colores primarios -->
+        <item name="colorPrimary">@color/terracota</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/arena_pastel</item>
+        <item name="colorOnPrimaryContainer">@color/texto_claro_primario</item>
+
+        <!-- Colores secundarios -->
+        <item name="colorSecondary">@color/verde_hoja_pastel</item>
+        <item name="colorOnSecondary">@color/texto_claro_primario</item>
+        <item name="colorSecondaryContainer">@color/amarillo_miel_suave</item>
+        <item name="colorOnSecondaryContainer">@color/texto_claro_primario</item>
+
+        <!-- Colores terciarios -->
+        <item name="colorTertiary">@color/amarillo_miel_suave</item>
+        <item name="colorOnTertiary">@color/texto_claro_primario</item>
+
+        <!-- Fondo y superficie -->
+        <item name="android:colorBackground">@color/crema_calida</item>
+        <item name="colorOnBackground">@color/texto_claro_primario</item>
+
+        <item name="colorSurface">@color/crema_blanca</item>
+        <item name="colorOnSurface">@color/texto_claro_primario</item>
+
+        <item name="colorSurfaceVariant">@color/arena_pastel</item>
+        <item name="colorOnSurfaceVariant">@color/texto_claro_secundario</item>
+
+        <!-- Barra de estado y navegación -->
+        <item name="android:statusBarColor">@color/crema_calida</item>
+        <item name="android:navigationBarColor">@color/crema_blanca</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <!-- Outline y divisores -->
+        <item name="colorOutline">@color/divider_light</item>
+        <item name="colorOutlineVariant">@color/arena_pastel</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Elevación / overlay -->
+        <item name="elevationOverlayColor">@color/overlay_light</item>
+
+        <!-- Componentes personalizados -->
+        <item name="chipStyle">@style/CustomChipStyle.Light</item>
+        <item name="materialCardViewStyle">@style/CustomCardStyle.Light</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigation.Light</item>
+        <item name="toolbarStyle">@style/CustomToolbar.Light</item>
     </style>
+
+    <style name="CustomToolbar.Light" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/crema_calida</item>
+        <item name="titleTextColor">@color/texto_claro_primario</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="CustomBottomNavigation.Light" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/crema_blanca</item>
+        <item name="itemIconTint">@color/bottom_nav_selector_light</item>
+        <item name="itemTextColor">@color/bottom_nav_selector_light</item>
+        <item name="elevation">6dp</item>
+        <item name="labelVisibilityMode">labeled</item>
+    </style>
+
+    <style name="CustomCardStyle.Light" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/crema_blanca</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <style name="CustomChipStyle.Light" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/arena_pastel</item>
+        <item name="android:textColor">@color/texto_claro_primario</item>
+    </style>
+
+    <style name="CustomButton.Light" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/terracota</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="CustomButton.Outlined.Light" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/terracota</item>
+        <item name="android:textColor">@color/terracota</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="CustomTextInputLayout.Light" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/terracota</item>
+        <item name="hintTextColor">@color/texto_claro_secundario</item>
+    </style>
+
 </resources>

@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bottom_sheet_bg"
+    android:background="@drawable/bottom_sheet_background"
     android:fillViewport="true">
 
     <LinearLayout
@@ -47,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_title"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:maxLines="4"
                     android:ellipsize="end"
                     android:lineSpacingMultiplier="1.1"
@@ -58,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_body"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:maxLines="2"
                     android:ellipsize="end" />
 
@@ -73,7 +74,7 @@
             android:text="Estado de lectura"
             android:textSize="@dimen/text_label"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="@dimen/spacing_small" />
 
         <Spinner
@@ -100,7 +101,7 @@
                 android:text="Fecha de inicio"
                 android:textSize="@dimen/text_label"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="@dimen/spacing_small" />
 
             <LinearLayout
@@ -115,7 +116,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_calendar"
-                    app:tint="@color/brown_dark"
+                    app:tint="?attr/colorPrimary"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
@@ -125,7 +126,7 @@
                     android:layout_weight="1"
                     android:text="Sin fecha"
                     android:textSize="@dimen/text_body"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <ImageButton
                     android:id="@+id/btnEditStartDate"
@@ -133,7 +134,7 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_edit"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/brown_dark"
+                    app:tint="?attr/colorPrimary"
                     android:contentDescription="Editar fecha" />
 
             </LinearLayout>
@@ -156,7 +157,7 @@
                 android:text="Fecha de término"
                 android:textSize="@dimen/text_label"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="@dimen/spacing_small" />
 
             <LinearLayout
@@ -171,7 +172,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_calendar"
-                    app:tint="@color/brown_dark"
+                    app:tint="?attr/colorPrimary"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
@@ -181,7 +182,7 @@
                     android:layout_weight="1"
                     android:text="Sin fecha"
                     android:textSize="@dimen/text_body"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <ImageButton
                     android:id="@+id/btnEditFinishDate"
@@ -189,7 +190,7 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_edit"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/brown_dark"
+                    app:tint="?attr/colorPrimary"
                     android:contentDescription="Editar fecha" />
 
             </LinearLayout>
@@ -210,7 +211,7 @@
                 android:text="Calificación"
                 android:textSize="@dimen/text_label"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="@dimen/spacing_small" />
 
             <RatingBar
@@ -224,7 +225,7 @@
                 android:transformPivotX="0dp"
                 android:transformPivotY="0dp"
                 android:layout_marginBottom="@dimen/spacing_medium"
-                android:progressTint="@color/rating_color" />
+                android:progressTint="@color/rating_gold" />
 
         </LinearLayout>
 
@@ -242,7 +243,7 @@
                 android:text="Mi reseña"
                 android:textSize="@dimen/text_label"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="@dimen/spacing_small" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -279,10 +280,10 @@
             android:layout_height="wrap_content"
             android:text="Marcar como favorito"
             android:textSize="@dimen/text_body"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:minHeight="@dimen/checkbox_height"
             android:layout_marginBottom="@dimen/spacing_large"
-            android:buttonTint="@color/brown_dark"
+            android:buttonTint="?attr/colorPrimary"
             android:visibility="gone" />
 
         <!-- Botones -->
@@ -300,8 +301,8 @@
                 android:minWidth="@dimen/button_min_width"
                 android:text="Cerrar"
                 android:textSize="@dimen/text_button"
-                android:textColor="@color/brown_dark"
-                app:strokeColor="@color/brown_dark"
+                android:textColor="?attr/colorPrimary"
+                app:strokeColor="?attr/colorPrimary"
                 android:layout_marginEnd="@dimen/spacing_small" />
 
             <Button
@@ -312,7 +313,7 @@
                 android:minWidth="@dimen/button_min_width"
                 android:text="GUARDAR"
                 android:textSize="@dimen/text_button"
-                app:backgroundTint="@color/brown_dark" />
+                app:backgroundTint="?attr/colorPrimary" />
 
         </LinearLayout>
 

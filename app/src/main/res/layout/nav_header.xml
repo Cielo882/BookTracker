@@ -24,7 +24,7 @@
         android:paddingTop="8dp"
         android:text="Lector Apasionado"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@android:color/white"
+        android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold" />
 
     <TextView
@@ -33,6 +33,6 @@
         android:layout_height="wrap_content"
         android:text="Mi biblioteca personal"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textColor="@android:color/white" />
+        android:textColor="?attr/colorOnPrimary" />
 
 </LinearLayout>

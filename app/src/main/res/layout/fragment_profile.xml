@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,12 +13,10 @@
 
         <!-- Header con estadísticas -->
         <com.google.android.material.card.MaterialCardView
+            style="@style/Card.Elevated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/brown_light">
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,7 +30,7 @@
                     android:text="Mis Estadísticas"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="12dp" />
 
                 <LinearLayout
@@ -57,14 +54,14 @@
                             android:text="0"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:textColor="@color/brown_dark" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Leídos"
                             android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
 
@@ -83,14 +80,14 @@
                             android:text="0"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:textColor="@color/brown_dark" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Por leer"
                             android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
 
@@ -109,14 +106,14 @@
                             android:text="0.0"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:textColor="@color/brown_dark" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Promedio"
                             android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
                     </LinearLayout>
 
@@ -126,14 +123,14 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Leyendo actualmente -->
+        <!-- Secciones de RecyclerViews sin cambios -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Leyendo Actualmente"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -142,14 +139,13 @@
             android:layout_height="200dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Favoritos -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mis Favoritos"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
