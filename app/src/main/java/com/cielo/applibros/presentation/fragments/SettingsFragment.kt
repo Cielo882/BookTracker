@@ -145,23 +145,31 @@ class SettingsFragment : Fragment() {
         val languageChanged = tempLanguage != currentSettings.language
         val themeChanged = tempTheme != currentSettings.themeMode
 
-        // Aplicar cambios
-        tempLanguage?.let {
-            if (languageChanged) {
-                viewModel.updateLanguage(it)
-            }
-        }
-
+        // --- CAMBIO SUGERIDO: Aplicar el tema PRIMERO si ha cambiado ---
         tempTheme?.let {
             if (themeChanged) {
+                // 1. Guardar y aplicar el TEMA. Esto no reinicia la actividad.
                 viewModel.updateTheme(it)
                 applyTheme(it)
             }
         }
+        // ----------------------------------------------------------------
 
-        // Mostrar mensaje
+        // --- Aplicar el idioma DESPUÉS si ha cambiado ---
+        tempLanguage?.let {
+            if (languageChanged) {
+                // 2. Guardar el IDIOMA. Esto probablemente reinicie la actividad,
+                // pero el tema ya está guardado y aplicado en la configuración.
+                viewModel.updateLanguage(it)
+            }
+        }
+        // ---------------------------------------------------
+
+
+        // Mostrar mensaje (Asegúrate de que este diálogo se pueda mostrar
+        // ANTES del reinicio, o considera mostrarlo en la nueva actividad)
         if (languageChanged || themeChanged) {
-            showChangesAppliedDialog(languageChanged, themeChanged)
+             //showChangesAppliedDialog(languageChanged, themeChanged)
         }
     }
 

@@ -53,6 +53,7 @@
         <item name="materialCardViewStyle">@style/CustomCardStyle.Light</item>
         <item name="bottomNavigationStyle">@style/CustomBottomNavigation.Light</item>
         <item name="toolbarStyle">@style/CustomToolbar.Light</item>
+
     </style>
 
     <style name="CustomToolbar.Light" parent="Widget.Material3.Toolbar">

@@ -33,10 +33,31 @@ class ProfileFragment : Fragment() {
 
         viewModel = (activity as MainActivity).getProfileViewModel()
 
+        applyOverlay(view)
+
         setupViews(view)
         setupObservers()
 
         viewModel.loadUserStats()
+    }
+
+    private fun applyOverlay(view: View) {
+        val overlay = view.findViewById<View>(R.id.profileOverlay)
+
+        val nightMode = resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK
+
+        if (nightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            // Modo oscuro → overlay negro suave
+            overlay.setBackgroundColor(
+                android.graphics.Color.parseColor("#CC000000")
+            )
+        } else {
+            // Modo claro → overlay blanco suave
+            overlay.setBackgroundColor(
+                android.graphics.Color.parseColor("#E6FFFFFF")
+            )
+        }
     }
 
     private fun setupViews(view: View) {

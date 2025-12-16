@@ -50,6 +50,7 @@
         <item name="materialCardViewStyle">@style/CustomCardStyle.Dark</item>
         <item name="bottomNavigationStyle">@style/CustomBottomNavigation.Dark</item>
         <item name="toolbarStyle">@style/CustomToolbar.Dark</item>
+
     </style>
 
     <!-- ============================================ -->
