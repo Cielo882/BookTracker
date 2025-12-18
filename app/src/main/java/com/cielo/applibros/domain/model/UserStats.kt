@@ -5,5 +5,5 @@ data class UserStats(
     val totalBooksToRead: Int = 0,
     val averageRating: Double = 0.0,
     val currentlyReading: List<Book> = emptyList(),
-    val favoriteBooks: List<Book> = emptyList()
+    val recentlyFinishedBooks: List<Book> = emptyList()
 )

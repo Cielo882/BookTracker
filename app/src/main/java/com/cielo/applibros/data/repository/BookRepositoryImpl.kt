@@ -111,6 +111,11 @@ class BookRepositoryImpl(
 
     override suspend fun getFavoriteBooks(): List<Book> {
         return bookDao.getFavoriteBooksList().map { it.toDomainModel() }
+
+    }
+    // ✅ NUEVO: Método suspendido
+    override suspend fun getFinishedBooksList(): List<Book> {
+        return bookDao.getFinishedBooksList().map { it.toDomainModel() }
     }
 }
 

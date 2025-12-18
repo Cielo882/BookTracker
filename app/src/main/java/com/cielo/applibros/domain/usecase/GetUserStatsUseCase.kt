@@ -14,12 +14,18 @@ class GetUserStatsUseCase(
         val currentlyReading = repository.getCurrentlyReading()
         val favorites = repository.getFavoriteBooks()
 
+        val finishedBooks = repository.getFinishedBooksList() // Método suspendido
+
+        val recentlyFinished = finishedBooks
+            .sortedByDescending { it.finishDate ?: 0L }
+            .take(10)
+
         return UserStats(
             totalBooksRead = totalRead,
             totalBooksToRead = totalToRead,
             averageRating = averageRating,
             currentlyReading = currentlyReading,
-            favoriteBooks = favorites
+            recentlyFinishedBooks = recentlyFinished  // ← CAMBIAR aquí
         )
     }
 }

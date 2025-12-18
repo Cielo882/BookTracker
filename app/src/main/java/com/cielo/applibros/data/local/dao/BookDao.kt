@@ -4,6 +4,7 @@ package com.cielo.applibros.data.local.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.cielo.applibros.data.local.entities.BookEntity
+import com.cielo.applibros.domain.model.Book
 import com.cielo.applibros.domain.model.ReadingStatus
 
 @Dao
@@ -76,4 +77,8 @@ interface BookDao {
 
     @Query("UPDATE books SET finishDate = :finishDate WHERE id = :bookId")
     suspend fun updateFinishDate(bookId: Int, finishDate: Long?)
+
+    // ✅ AGREGAR ESTE MÉTODO NUEVO (versión suspendida)
+    @Query("SELECT * FROM books WHERE readingStatus = 'FINISHED' ORDER BY finishDate DESC")
+    suspend fun getFinishedBooksList(): List<BookEntity>
 }

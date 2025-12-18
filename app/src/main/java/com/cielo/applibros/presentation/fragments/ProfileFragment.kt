@@ -19,7 +19,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: ProfileViewModel
     private lateinit var currentlyReadingAdapter: CompactBookAdapter
-    private lateinit var favoritesAdapter: CompactBookAdapter
+    private lateinit var recentlyFinishedAdapter: CompactBookAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +68,7 @@ class ProfileFragment : Fragment() {
             dialog.show(parentFragmentManager, "book_detail")
         }
 
-        favoritesAdapter = CompactBookAdapter { book ->
+        recentlyFinishedAdapter = CompactBookAdapter { book ->
             val dialog = BookDetailDialogFragment.newInstance(book)
             dialog.show(parentFragmentManager, "book_detail")
         }
@@ -86,7 +86,7 @@ class ProfileFragment : Fragment() {
 
         // Configurar RecyclerView para "Mis Favoritos"
         view.findViewById<RecyclerView>(R.id.rvFavorites).apply {
-            adapter = favoritesAdapter
+            adapter = recentlyFinishedAdapter
             layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL,
@@ -105,7 +105,7 @@ class ProfileFragment : Fragment() {
                     String.format("%.1f", stats.averageRating)
 
                 currentlyReadingAdapter.submitList(stats.currentlyReading)
-                favoritesAdapter.submitList(stats.favoriteBooks)
+                recentlyFinishedAdapter.submitList(stats.recentlyFinishedBooks)
             }
         }
     }
