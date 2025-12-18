@@ -85,6 +85,8 @@
     <color name="divider_dark">#1FFFFFFF</color>
 
 
+    <color name="pattern_overlay">#B3FFFDF5</color> <!-- overlay claro -->
+
 
     <!-- ============================================ -->
     <!-- COLORES LEGACY (Mantener compatibilidad) -->

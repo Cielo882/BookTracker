@@ -1,4 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/profile_pattern"
-    android:tileMode="repeat" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- fondo con patrón -->
+    <item>
+        <bitmap
+            android:src="@drawable/profile_pattern"
+
+            android:gravity="fill" />
+    </item>
+
+    <!-- overlay oscuro/claro -->
+    <item android:id="@+id/overlay">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/pattern_overlay"/>
+        </shape>
+    </item>
+
+</layer-list>

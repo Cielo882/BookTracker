@@ -9,7 +9,7 @@
         android:id="@+id/ivProfilePattern"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/profile_pattern"
+        android:src="@drawable/profile"
         android:scaleType="centerCrop"
         android:contentDescription="@null" />
 

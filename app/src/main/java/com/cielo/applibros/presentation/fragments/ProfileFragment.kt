@@ -13,6 +13,7 @@ import com.cielo.applibros.R
 import com.cielo.applibros.presentation.adapter.CompactBookAdapter
 import com.cielo.applibros.presentation.dialogs.BookDetailDialogFragment
 import com.cielo.applibros.presentation.viewmodel.ProfileViewModel
+import androidx.core.graphics.toColorInt
 
 class ProfileFragment : Fragment() {
 
@@ -50,12 +51,12 @@ class ProfileFragment : Fragment() {
         if (nightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
             // Modo oscuro → overlay negro suave
             overlay.setBackgroundColor(
-                android.graphics.Color.parseColor("#CC000000")
+                "#CC000000".toColorInt()
             )
         } else {
             // Modo claro → overlay blanco suave
             overlay.setBackgroundColor(
-                android.graphics.Color.parseColor("#E6FFFFFF")
+                "#B3FFFDF5".toColorInt()
             )
         }
     }
