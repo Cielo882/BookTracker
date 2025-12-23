@@ -25,7 +25,8 @@ class GetUserStatsUseCase(
             totalBooksToRead = totalToRead,
             averageRating = averageRating,
             currentlyReading = currentlyReading,
-            recentlyFinishedBooks = recentlyFinished  // ← CAMBIAR aquí
+            recentlyFinishedBooks = recentlyFinished,
+           // favoriteBooks = favorites
         )
     }
 }

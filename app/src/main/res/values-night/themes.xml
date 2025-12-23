@@ -45,6 +45,10 @@
         <!-- Elevación y sombras -->
         <item name="elevationOverlayColor">@color/overlay_dark</item>
 
+
+        <item name="colorPatternOverlay">@color/pattern_overlay_dark</item>
+
+
         <!-- Componentes personalizados -->
         <item name="chipStyle">@style/CustomChipStyle.Dark</item>
         <item name="materialCardViewStyle">@style/CustomCardStyle.Dark</item>
@@ -107,7 +111,7 @@
     </style>
 
     <style name="CustomBottomSheetStyle.Dark" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="android:background">@drawable/bottom_sheet_background_dark</item>
+        <item name="android:background">@drawable/bottom_sheet_background</item>
         <item name="shapeAppearanceOverlay">@style/CustomBottomSheetShape</item>
     </style>
 

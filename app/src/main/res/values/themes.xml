@@ -32,7 +32,7 @@
         <item name="colorOnSurfaceVariant">@color/texto_claro_secundario</item>
 
         <!-- Barra de estado y navegación -->
-        <item name="android:statusBarColor">@color/crema_calida</item>
+        <item name="android:statusBarColor">@color/terracota</item>
         <item name="android:navigationBarColor">@color/crema_blanca</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
@@ -47,6 +47,10 @@
 
         <!-- Elevación / overlay -->
         <item name="elevationOverlayColor">@color/overlay_light</item>
+
+        <item name="colorPatternOverlay">@color/pattern_overlay_light</item>
+
+
 
         <!-- Componentes personalizados -->
         <item name="chipStyle">@style/CustomChipStyle.Light</item>

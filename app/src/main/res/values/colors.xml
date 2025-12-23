@@ -85,7 +85,10 @@
     <color name="divider_dark">#1FFFFFFF</color>
 
 
-    <color name="pattern_overlay">#B3FFFDF5</color> <!-- overlay claro -->
+    <color name="pattern_overlay_light">#B3FFFDF5</color> <!-- overlay claro -->
+
+    <color name="pattern_overlay_dark">#CC000000</color>
+
 
 
     <!-- ============================================ -->

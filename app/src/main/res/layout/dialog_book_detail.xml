@@ -83,6 +83,9 @@
             android:layout_height="@dimen/spinner_height"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:background="@drawable/spinner_bg"
+            android:textSize="@dimen/text_label"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
             android:paddingHorizontal="@dimen/spacing_medium" />
 
         <!-- Fecha de inicio (Leyendo y Terminado) -->
@@ -295,25 +298,24 @@
 
             <Button
                 android:id="@+id/btnClose"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_height"
                 android:minWidth="@dimen/button_min_width"
                 android:text="Cerrar"
                 android:textSize="@dimen/text_button"
                 android:textColor="?attr/colorPrimary"
-                app:strokeColor="?attr/colorPrimary"
+                style="@style/Button.Secondary"
                 android:layout_marginEnd="@dimen/spacing_small" />
 
             <Button
                 android:id="@+id/btnSave"
-                style="@style/Widget.Material3.Button"
+
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_height"
                 android:minWidth="@dimen/button_min_width"
-                android:text="GUARDAR"
+                android:text="Guardar"
                 android:textSize="@dimen/text_button"
-                app:backgroundTint="?attr/colorPrimary" />
+                style="@style/Button.Primary"/>
 
         </LinearLayout>
 

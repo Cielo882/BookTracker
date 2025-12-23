@@ -39,7 +39,7 @@
         android:layout_gravity="end"
         android:text="Buscar"
         android:layout_marginBottom="16dp"
-        app:backgroundTint="?attr/colorPrimary" />
+        style="@style/Button.Primary" />
 
     <ProgressBar
         android:id="@+id/progressBar"

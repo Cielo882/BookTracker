@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 loadFragment(StatisticsFragment())
             }
             R.id.nav_favorites -> {
-                loadFragment(FinishedFragment())
+                loadFragment(FavoritesFragment())
             }
             R.id.nav_reading_log -> {
                 loadFragment(ReadingLogFragment()) // NUEVO

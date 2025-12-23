@@ -376,7 +376,7 @@
             android:textColor="?attr/colorOnPrimary"
             app:icon="@drawable/ic_arrow_down"
             app:iconGravity="start"
-            android:backgroundTint="@color/brown_dark"
+            android:backgroundTint="?attr/colorPrimary"
             app:cornerRadius="8dp"
             android:layout_marginBottom="16dp" />
 

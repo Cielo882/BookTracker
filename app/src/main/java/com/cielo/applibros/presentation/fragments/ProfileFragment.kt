@@ -21,6 +21,8 @@ class ProfileFragment : Fragment() {
     private lateinit var currentlyReadingAdapter: CompactBookAdapter
     private lateinit var recentlyFinishedAdapter: CompactBookAdapter
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,6 +75,7 @@ class ProfileFragment : Fragment() {
             dialog.show(parentFragmentManager, "book_detail")
         }
 
+
         // Configurar RecyclerView para "Leyendo Actualmente"
         view.findViewById<RecyclerView>(R.id.rvCurrentlyReading).apply {
             adapter = currentlyReadingAdapter
@@ -94,6 +97,8 @@ class ProfileFragment : Fragment() {
             )
             setHasFixedSize(true)
         }
+
+
     }
 
     private fun setupObservers() {
