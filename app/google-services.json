@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "864108937408",
+    "project_id": "booktracker-8426",
+    "storage_bucket": "booktracker-8426.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864108937408:android:2a5acbc0c01e20f118ad25",
+        "android_client_info": {
+          "package_name": "com.cielo.applibros"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFqP5rpSDzrB5-CsCgXXHKL3N17i7Ilso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
