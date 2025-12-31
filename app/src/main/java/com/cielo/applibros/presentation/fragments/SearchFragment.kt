@@ -66,7 +66,7 @@ class SearchFragment : Fragment() {
             onAddBook = { book, status ->
                 val bookWithStatus = book.copy(readingStatus = status)
                 viewModel.addToRead(bookWithStatus)
-                showBookAddedConfirmation(book.title, status)
+                //showBookAddedConfirmation(book.title, status)
                 // NUEVO: Actualizar lista de IDs existentes
                 loadExistingBookIds()
             },
@@ -140,7 +140,7 @@ class SearchFragment : Fragment() {
                             onAddBook = { book, status ->
                                 val bookWithStatus = book.copy(readingStatus = status)
                                 viewModel.addToRead(bookWithStatus)
-                                showBookAddedConfirmation(book.title, status)
+                                //showBookAddedConfirmation(book.title, status)
                                 loadExistingBookIds()
                             },
                             existingBookIds = existingBookIds
@@ -192,6 +192,7 @@ class SearchFragment : Fragment() {
             ReadingStatus.READING -> "Leyendo"
             ReadingStatus.FINISHED -> "Leídos"
         }
+
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("¡Libro agregado!")

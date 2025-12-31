@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="?attr/colorOnSurface"
                 android:background="@drawable/status_badge_bg"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
@@ -114,16 +114,18 @@
             android:gravity="center">
 
             <!-- Botón de estado -->
+
+            <!-- Botón de favorito (opcional) -->
+
             <ImageView
                 android:id="@+id/ivStatus"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
-                android:layout_marginBottom="8dp"
                 app:tint="?attr/colorPrimary" />
 
-            <!-- Botón de favorito (opcional) -->
             <ImageView
                 android:id="@+id/ivFavorite"
                 android:layout_width="32dp"
